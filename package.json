@@ -1,0 +1,11 @@
+{
+  "name": "pomeloec-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "pnpm --filter backend start",
+    "dev": "pnpm --filter backend start:dev",
+    "build": "pnpm --filter backend build",
+    "test": "pnpm --filter backend test"
+  }
+}

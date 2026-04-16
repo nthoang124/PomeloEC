@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique @db.VarChar(255)
+  phone         String?   @unique @db.VarChar(20)
+  password_hash String?   @db.VarChar(255)
+  role          UserRole  @default(BUYER)
+  loyalty_coins Int       @default(0)
+  created_at    DateTime  @default(now())
+  
+  // Relations
+  addresses     Address[]
+  orders        Order[]
+  store         Store?
+}
+
+enum UserRole {
+  BUYER
+  SELLER
+  ADMIN
+}
+
+model Address {
+  id            String   @id @default(uuid()) @db.Uuid
+  user_id       String   @db.Uuid
+  user          User     @relation(fields: [user_id], references: [id])
+  full_name     String   @db.VarChar(100)
+  phone         String   @db.VarChar(20)
+  province      String   @db.VarChar(100)
+  district      String   @db.VarChar(100)
+  ward          String   @db.VarChar(100)
+  exact_address String   @db.VarChar(255)
+  is_default    Boolean  @default(false)
+}
+
+model Store {
+  id                String      @id @default(uuid()) @db.Uuid
+  owner_id          String      @unique @db.Uuid
+  owner             User        @relation(fields: [owner_id], references: [id])
+  name              String      @db.VarChar(100)
+  available_balance Decimal     @default(0.0) @db.Decimal(15, 2)
+  escrow_balance    Decimal     @default(0.0) @db.Decimal(15, 2)
+  status            StoreStatus @default(PENDING)
+  
+  products          Product[]
+}
+
+enum StoreStatus {
+  PENDING
+  VERIFIED
+  BANNED
+}
+
+model Product {
+  id          String   @id @default(uuid()) @db.Uuid
+  store_id    String   @db.Uuid
+  store       Store    @relation(fields: [store_id], references: [id])
+  name        String   @db.VarChar(255)
+  base_price  Decimal  @db.Decimal(15, 2)
+  
+  variants    Variant[]
+  
+  @@index([store_id])
+}
+
+model Variant {
+  id             String      @id @default(uuid()) @db.Uuid
+  product_id     String      @db.Uuid
+  product        Product     @relation(fields: [product_id], references: [id])
+  sku            String      @unique @db.VarChar(50)
+  stock_quantity Int         @default(0)
+  price          Decimal     @db.Decimal(15, 2)
+  
+  order_items    OrderItem[]
+  
+  @@index([product_id])
+}
+
+model Order {
+  id              String      @id @default(uuid()) @db.Uuid
+  buyer_id        String      @db.Uuid
+  buyer           User        @relation(fields: [buyer_id], references: [id])
+  status          OrderStatus @default(PENDING_PAYMENT)
+  total_amount    Decimal     @db.Decimal(15, 2)
+  created_at      DateTime    @default(now())
+  
+  items           OrderItem[]
+  
+  @@index([buyer_id, created_at])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELED
+}
+
+model OrderItem {
+  id          String  @id @default(uuid()) @db.Uuid
+  order_id    String  @db.Uuid
+  order       Order   @relation(fields: [order_id], references: [id])
+  variant_id  String  @db.Uuid
+  variant     Variant @relation(fields: [variant_id], references: [id])
+  quantity    Int
+  unit_price  Decimal @db.Decimal(15, 2)
+  
+  @@index([order_id])
+}
