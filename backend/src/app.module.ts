@@ -9,6 +9,10 @@ import { CommunicationModule } from './communication/communication.module';
 import { BackgroundJobsModule } from './background-jobs/background-jobs.module';
 import { IamModule } from './iam/iam.module';
 import { CatalogModule } from './catalog/catalog.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { RedisModule } from './shared/redis/redis.module';
+import { CartModule } from './cart/cart.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -51,6 +55,14 @@ import { CatalogModule } from './catalog/catalog.module';
     IamModule,
 
     CatalogModule,
+
+    InventoryModule,
+
+    RedisModule,
+
+    CartModule,
+
+    SearchModule,
 
     // Add Domain Modules here...
   ],

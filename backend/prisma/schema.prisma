@@ -133,6 +133,7 @@ model Variant {
   
   attribute_mappings VariantAttributeMapping[]
   order_items        OrderItem[]
+  inventory_ledgers  InventoryLedger[]
   
   @@index([product_id])
 }
@@ -182,4 +183,26 @@ model OrderItem {
   unit_price  Decimal @db.Decimal(15, 2)
   
   @@index([order_id])
+}
+
+// ------ INVENTORY MODULE ------
+
+model InventoryLedger {
+  id               String           @id @default(uuid()) @db.Uuid
+  variant_id       String           @db.Uuid
+  variant          Variant          @relation(fields: [variant_id], references: [id])
+  quantity_change  Int              // Số dương (Nhập hàng, Khách hoàn trả), Số âm (Khách mua, Xuất hủy)
+  transaction_type TransactionType
+  reference_id     String?          @db.Uuid // ID của Đơn hàng (Order) hoặc Đơn nhập (Import)
+  created_at       DateTime         @default(now())
+
+  @@index([variant_id])
+  @@index([reference_id])
+}
+
+enum TransactionType {
+  IMPORT       // Nhập kho
+  SALE         // Bán hàng (Checkout)
+  RETURN       // Khách trả hàng
+  ADJUSTMENT   // Điều chỉnh (Hư hỏng, Thất thoát)
 }

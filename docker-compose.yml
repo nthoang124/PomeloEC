@@ -91,8 +91,23 @@ services:
         hard: 262144
     restart: always
 
+  # 7. Phân tích Tìm kiếm (Full-Text Search Engine)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: pomeloec_elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: always
+
 volumes:
   postgres_data:
   redis_data:
   kafka_data:
   clickhouse_data:
+  elasticsearch_data:
