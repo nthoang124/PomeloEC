@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sản phẩm - Kênh Người Bán (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .app-window-seller {
+        width: 95vw;
+        max-width: 1400px;
+        height: 90vh;
+        max-height: 900px;
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-glass);
+        border-radius: 40px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        color: white;
+      }
+
+      .seller-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--sp-6) var(--sp-8) 0 var(--sp-8);
+      }
+      .seller-layout {
+        padding: var(--sp-6) var(--sp-8);
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        gap: var(--sp-8);
+      }
+      .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+      }
+
+      .menu-group {
+        margin-bottom: var(--sp-6);
+      }
+      .menu-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 0 var(--sp-4);
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px var(--sp-4);
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+      }
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .menu-item.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .main-content {
+        flex: 1;
+      }
+
+      .header-action {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--sp-6);
+      }
+
+      .search-bar {
+        padding: 10px 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: var(--radius-md);
+        width: 300px;
+        outline: none;
+        color: white;
+        transition: border-color var(--transition-fast);
+      }
+      .search-bar:focus {
+        border-color: rgba(255, 255, 255, 0.8);
+      }
+      .search-bar option {
+        color: black;
+      } /* Browser default dropdown fix */
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th {
+        background: rgba(255, 255, 255, 0.05);
+        padding: var(--sp-3) var(--sp-4);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: rgba(255, 255, 255, 0.6);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      td {
+        padding: var(--sp-4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.875rem;
+        vertical-align: top;
+      }
+
+      .product-cell {
+        display: flex;
+        gap: var(--sp-3);
+        align-items: flex-start;
+      }
+      .product-img {
+        width: 50px;
+        height: 50px;
+        border-radius: var(--radius-sm);
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .sku-matrix {
+        background: rgba(0, 0, 0, 0.2);
+        padding: var(--sp-3);
+        border-radius: var(--radius-md);
+        margin-top: 8px;
+        border: 1px dashed rgba(255, 255, 255, 0.1);
+      }
+      .sku-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .sku-row:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window-seller">
+      <header class="seller-nav">
+        <div
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <span style="font-size: 1.8rem">📦</span> Kênh Người Bán
+        </div>
+        <div
+          style="
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+          "
+        >
+          S
+        </div>
+      </header>
+
+      <div class="seller-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="menu-group">
+            <div class="menu-title">Tổng quan</div>
+            <a href="seller-dashboard.html" class="menu-item"
+              >📊 Bảng điều khiển</a
+            >
+          </div>
+
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Sản phẩm</div>
+            <a href="seller-products.html" class="menu-item active"
+              >🏷️ Danh sách (\`UC-11\`)</a
+            >
+            <a href="#" class="menu-item">📝 Thêm mới (SKU Matrix)</a>
+          </div>
+
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Đơn hàng</div>
+            <a href="seller-orders.html" class="menu-item"
+              >📦 Màn hình In Đơn (\`UC-19\`)</a
+            >
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <div class="header-action">
+            <h2 style="color: white">Quản trị Sản phẩm</h2>
+            <button
+              style="
+                background: rgba(16, 185, 129, 0.8);
+                padding: 8px 16px;
+                border-radius: var(--radius-md);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                color: white;
+                font-weight: bold;
+              "
+            >
+              + Thêm Sản Phẩm Mới
+            </button>
+          </div>
+
+          <div
+            style="display: flex; gap: var(--sp-4); margin-bottom: var(--sp-6)"
+          >
+            <input
+              type="text"
+              class="search-bar"
+              placeholder="Tìm theo tên sản phẩm, SKU..."
+            />
+            <select class="search-bar" style="width: auto">
+              <option>Tất cả danh mục</option>
+              <option>Trái cây</option>
+              <option>Rau củ</option>
+            </select>
+            <select class="search-bar" style="width: auto">
+              <option>Trạng thái: Đang bán</option>
+              <option>Đã ẩn</option>
+              <option>Hết hàng</option>
+            </select>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th width="40%">Sản phẩm</th>
+                  <th width="30%">Biến thể (SKU Matrix)</th>
+                  <th width="15%">Tổng Tồn Kho</th>
+                  <th width="15%">Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img">🍓</div>
+                      <div>
+                        <div class="font-bold">
+                          Dâu tây Mộc Châu túi 500g loại 1
+                        </div>
+                        <div
+                          class="text-xs"
+                          style="
+                            margin-top: 4px;
+                            color: rgba(255, 255, 255, 0.6);
+                          "
+                        >
+                          ID: PROD_001 • Danh mục: Trái Cây
+                        </div>
+                        <div
+                          style="
+                            margin-top: 8px;
+                            padding: 2px 8px;
+                            background: rgba(16, 185, 129, 0.2);
+                            color: #a7dba7;
+                            border-radius: var(--radius-full);
+                            font-size: 0.7rem;
+                            display: inline-block;
+                          "
+                        >
+                          ĐANG HOẠT ĐỘNG
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="sku-matrix text-xs">
+                      <div class="sku-row">
+                        <span class="font-bold">Hộp Nhựa</span>
+                        <span style="opacity: 0.8">125.000₫ | Kho: 24</span>
+                      </div>
+                      <div class="sku-row">
+                        <span class="font-bold">Hộp Giấy Kraft</span>
+                        <span style="opacity: 0.8">130.000₫ | Kho: 12</span>
+                      </div>
+                      <div class="sku-row" style="color: #f87171">
+                        <span class="font-bold">Giỏ Quà Biếu</span>
+                        <span style="opacity: 0.8">180.000₫ | Kho: 0</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold" style="font-size: 1.1rem">36</div>
+                  </td>
+                  <td>
+                    <button
+                      style="
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        width: 100%;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Sửa Matrix
+                    </button>
+                    <button
+                      style="
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        width: 100%;
+                      "
+                    >
+                      Ẩn
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                  <td>
+                    <div class="product-cell">
+                      <div class="product-img">🥬</div>
+                      <div>
+                        <div class="font-bold">Bắp cải tím Đà Lạt VietGAP</div>
+                        <div
+                          class="text-xs"
+                          style="
+                            margin-top: 4px;
+                            color: rgba(255, 255, 255, 0.6);
+                          "
+                        >
+                          ID: PROD_002 • Danh mục: Rau Củ
+                        </div>
+                        <div
+                          style="
+                            margin-top: 8px;
+                            padding: 2px 8px;
+                            background: rgba(16, 185, 129, 0.2);
+                            color: #a7dba7;
+                            border-radius: var(--radius-full);
+                            font-size: 0.7rem;
+                            display: inline-block;
+                          "
+                        >
+                          ĐANG HOẠT ĐỘNG
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="sku-matrix text-xs">
+                      <div class="sku-row">
+                        <span class="font-bold">Bắp 1kg</span>
+                        <span style="opacity: 0.8">35.000₫ | Kho: 140</span>
+                      </div>
+                      <div class="sku-row">
+                        <span class="font-bold">Cắt Nửa (500g)</span>
+                        <span style="opacity: 0.8">18.000₫ | Kho: 200</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold" style="font-size: 1.1rem">340</div>
+                  </td>
+                  <td>
+                    <button
+                      style="
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        width: 100%;
+                        margin-bottom: 8px;
+                      "
+                    >
+                      Sửa Matrix
+                    </button>
+                    <button
+                      style="
+                        background: rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        color: white;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        width: 100%;
+                      "
+                    >
+                      Ẩn
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

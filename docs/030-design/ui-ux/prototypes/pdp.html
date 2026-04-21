@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết Sản phẩm - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .pdp-layout {
+        grid-template-columns: 1fr 400px !important;
+        align-items: start;
+      }
+
+      .pdp-gallery {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8rem;
+        position: relative;
+      }
+
+      .rating-stars {
+        color: #f59e0b;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+      }
+
+      .shop-card {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-4);
+        padding: var(--sp-4);
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-md);
+        margin: var(--sp-6) 0;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      /* Purchase Ribbon inside the Glass Window */
+      .purchase-ribbon {
+        background: var(--card-white-glass-intense);
+        backdrop-filter: blur(30px);
+        border-top: 1px solid rgba(255, 255, 255, 0.8);
+        padding: var(--sp-4);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        bottom: -var(--sp-6); /* Offset parent padding */
+        margin: 0 -var(--sp-8);
+        border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      }
+
+      .review-item {
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        padding: var(--sp-4) 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Header -->
+      <header class="app-nav">
+        <a
+          href="search.html"
+          style="
+            font-weight: 700;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          ← Back to Shop
+        </a>
+
+        <button
+          class="btn-icon"
+          style="background: var(--card-white-glass); border: none"
+        >
+          🛒
+        </button>
+      </header>
+
+      <main class="app-content pdp-layout">
+        <!-- Left Column: Gallery & Reviews -->
+        <div style="display: flex; flex-direction: column; gap: var(--sp-6)">
+          <div class="pdp-gallery">
+            🍓
+            <div
+              class="badge"
+              style="
+                background: rgba(255, 255, 255, 0.7);
+                position: absolute;
+                bottom: 20px;
+                left: 20px;
+              "
+            >
+              Hữu cơ VietGAP
+            </div>
+          </div>
+
+          <!-- User Reviews -->
+          <div class="glass-box">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: baseline;
+                margin-bottom: var(--sp-4);
+              "
+            >
+              <h3>Đánh giá từ khách hàng</h3>
+              <span class="text-sm text-muted">Xem thêm (128)</span>
+            </div>
+
+            <div class="review-item">
+              <div
+                style="
+                  display: flex;
+                  gap: var(--sp-3);
+                  align-items: center;
+                  margin-bottom: 8px;
+                "
+              >
+                <div
+                  style="
+                    width: 32px;
+                    height: 32px;
+                    background: rgba(255, 255, 255, 0.8);
+                    border-radius: 50%;
+                  "
+                ></div>
+                <div>
+                  <div class="text-sm font-bold">Hương Lan</div>
+                  <div class="rating-stars text-xs">★★★★★</div>
+                </div>
+              </div>
+              <p class="text-sm text-muted">
+                Dâu siêu to khổng lồ, tươi rói. Đóng gói cẩn thận không dập quả
+                nào. Hôm sau sẽ ủng hộ tiếp shop nhé.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Info & Action -->
+        <div
+          class="glass-box"
+          style="
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+          "
+        >
+          <div style="flex: 1">
+            <span class="rating-stars">★★★★★</span>
+            <span class="text-sm text-muted">(4.8/5 - 128 Đánh giá)</span>
+            <h1 style="font-size: 2rem; margin-top: var(--sp-2)">
+              Dâu tây Mộc Châu loại 1 (Túi 500g)
+            </h1>
+
+            <div
+              style="
+                margin-top: var(--sp-4);
+                display: flex;
+                gap: var(--sp-2);
+                align-items: baseline;
+              "
+            >
+              <span class="font-bold" style="font-size: 2.5rem; color: #f43f5e"
+                >125.000₫</span
+              >
+              <span class="text-muted" style="text-decoration: line-through"
+                >150.000₫</span
+              >
+            </div>
+
+            <!-- Shop Information -->
+            <div class="shop-card">
+              <div
+                style="
+                  width: 50px;
+                  height: 50px;
+                  border-radius: 50%;
+                  background: #c1e1c1;
+                "
+              ></div>
+              <div style="flex: 1">
+                <h3 class="text-sm font-bold">Nông Trại Dâu Sạch 247</h3>
+                <p class="text-xs text-muted">
+                  📍 Mộc Châu, Sơn La • 98% Phản hồi
+                </p>
+              </div>
+              <button
+                class="btn-glass"
+                style="width: auto; padding: 8px 16px; font-size: 0.8rem"
+              >
+                Xem Shop
+              </button>
+            </div>
+
+            <!-- Description -->
+            <div style="margin-top: var(--sp-6)">
+              <h3>Đặc điểm nổi bật</h3>
+              <ul
+                style="
+                  padding-left: var(--sp-5);
+                  margin-top: var(--sp-3);
+                  color: var(--color-text-muted);
+                  line-height: 1.8;
+                  font-size: 0.9rem;
+                "
+              >
+                <li>Thu hoạch trực tiếp từ farm chuẩn VietGAP.</li>
+                <li>Chín tự nhiên, ngọt thanh, không chất bảo quản.</li>
+                <li>Đóng gói hộp kraft cách nhiệt bảo vệ môi trường.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sticky Purchase Ribbon Inside Box -->
+          <div
+            style="
+              margin-top: var(--sp-6);
+              background: rgba(255, 255, 255, 0.5);
+              padding: var(--sp-4);
+              border-radius: var(--radius-md);
+              border: 1px solid rgba(255, 255, 255, 0.8);
+            "
+          >
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: var(--sp-4);
+              "
+            >
+              <span class="text-sm font-bold">Số lượng</span>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 12px;
+                  background: white;
+                  padding: 4px;
+                  border-radius: var(--radius-full);
+                "
+              >
+                <button
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    background: #f3f4f6;
+                    border-radius: 50%;
+                  "
+                >
+                  -
+                </button>
+                <span class="font-bold">1</span>
+                <button
+                  style="
+                    width: 30px;
+                    height: 30px;
+                    background: #f3f4f6;
+                    border-radius: 50%;
+                  "
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <button
+              class="btn-glass"
+              style="background: rgba(244, 63, 94, 0.8); color: white"
+              onclick="alert('Đã thêm 1 Dâu tây vào giỏ hàng!')"
+            >
+              Thêm Giỏ Hàng - 125.000₫
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

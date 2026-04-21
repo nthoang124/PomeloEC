@@ -37,9 +37,13 @@ model User {
   created_at    DateTime  @default(now())
   
   // Relations
-  addresses     Address[]
-  orders        Order[]
-  store         Store?
+  addresses      Address[]
+  orders         Order[]
+  store          Store?
+  reviews        Review[]
+  loyalty_ledger LoyaltyLedger[]
+  sent_messages  ChatMessage[]   @relation("SentMessages")
+  recv_messages  ChatMessage[]   @relation("ReceivedMessages")
 }
 
 enum UserRole {
@@ -58,6 +62,7 @@ model Store {
   status            StoreStatus @default(PENDING)
   
   products          Product[]
+  campaigns         PromotionCampaign[]
 }
 
 enum StoreStatus {
@@ -88,6 +93,9 @@ model Variant {
   price          Decimal     @db.Decimal(15, 2)
   
   order_items    OrderItem[]
+  reviews        Review[]
+  inventory_logs InventoryLedger[]
+  promo_items    PromotionItem[]
   
   @@index([product_id])
 }
@@ -97,10 +105,17 @@ model Order {
   buyer_id        String      @db.Uuid
   buyer           User        @relation(fields: [buyer_id], references: [id])
   status          OrderStatus @default(PENDING_PAYMENT)
-  total_amount    Decimal     @db.Decimal(15, 2)
-  created_at      DateTime    @default(now())
+  total_amount           Decimal     @db.Decimal(15, 2)
+  shipping_tracking_code String?     @db.VarChar(100)
+  affiliate_id           String?     @db.VarChar(100)
+  risk_score             Int         @default(0)
+  is_fraud_suspect       Boolean     @default(false)
+  created_at             DateTime    @default(now())
   
-  items           OrderItem[]
+  items                  OrderItem[]
+  transactions           PaymentTransaction[]
+  return_request         ReturnRequest?
+  vouchers               OrderVoucher[]
   
   // Partitioning strategy: In native Postgres, index created_at for time-series partitioning
   @@index([buyer_id, created_at])
@@ -125,7 +140,195 @@ model OrderItem {
   quantity    Int
   unit_price  Decimal @db.Decimal(15, 2)
   
+  review      Review?
+  
   @@index([order_id])
+}
+
+model Address {
+  id           String  @id @default(uuid()) @db.Uuid
+  user_id      String  @db.Uuid
+  user         User    @relation(fields: [user_id], references: [id])
+  province     String  @db.VarChar(100)
+  district     String  @db.VarChar(100)
+  ward         String  @db.VarChar(100)
+  full_address String  @db.VarChar(255)
+  lat          Float?
+  lng          Float?
+  is_default   Boolean @default(false)
+  
+  @@index([user_id])
+}
+
+model Review {
+  id            String    @id @default(uuid()) @db.Uuid
+  user_id       String    @db.Uuid
+  user          User      @relation(fields: [user_id], references: [id])
+  order_item_id String    @unique @db.Uuid
+  order_item    OrderItem @relation(fields: [order_item_id], references: [id])
+  variant_id    String    @db.Uuid
+  variant       Variant   @relation(fields: [variant_id], references: [id])
+  rating_star   Int       @db.SmallInt
+  comment       String?   @db.Text
+  media_urls    Json?     // Array of media URLs
+  created_at    DateTime  @default(now())
+
+  @@index([variant_id])
+  @@index([user_id])
+}
+
+model InventoryLedger {
+  id              String         @id @default(uuid()) @db.Uuid
+  variant_id      String         @db.Uuid
+  variant         Variant        @relation(fields: [variant_id], references: [id])
+  type            InventoryType
+  quantity_change Int            
+  reason          String?        @db.VarChar(255)
+  created_at      DateTime       @default(now())
+
+  @@index([variant_id, created_at])
+}
+
+enum InventoryType {
+  IN
+  OUT
+  RETURNED
+}
+
+model Voucher {
+  id            String       @id @default(uuid()) @db.Uuid
+  code          String       @unique @db.VarChar(50)
+  discount_type DiscountType
+  max_discount  Decimal?     @db.Decimal(15, 2)
+  quota         Int          @default(0)
+  expiry_date   DateTime
+  created_at    DateTime     @default(now())
+  
+  orders        OrderVoucher[]
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model PaymentTransaction {
+  id               String            @id @default(uuid()) @db.Uuid
+  order_id         String            @db.Uuid
+  order            Order             @relation(fields: [order_id], references: [id])
+  txn_ref          String            @unique @db.VarChar(100)
+  amount           Decimal           @db.Decimal(15, 2)
+  provider         PaymentProvider
+  status           PaymentStatus     @default(PENDING)
+  gateway_response Json?
+  created_at       DateTime          @default(now())
+
+  @@index([order_id])
+}
+
+enum PaymentProvider {
+  VNPAY
+  MOMO
+  COD
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+// ==========================================
+// Phase 2: Operations & Extended Modules
+// ==========================================
+
+model ReturnRequest {
+  id            String            @id @default(uuid()) @db.Uuid
+  order_id      String            @unique @db.Uuid
+  order         Order             @relation(fields: [order_id], references: [id])
+  reason        String            @db.Text
+  media_urls    Json?
+  status        ReturnStatus      @default(PENDING)
+  refund_amount Decimal           @db.Decimal(15, 2)
+  created_at    DateTime          @default(now())
+}
+
+enum ReturnStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model LoyaltyLedger {
+  id         String      @id @default(uuid()) @db.Uuid
+  user_id    String      @db.Uuid
+  user       User        @relation(fields: [user_id], references: [id])
+  order_id   String?     @db.Uuid
+  amount     Decimal     @db.Decimal(15, 2)
+  type       LoyaltyType
+  created_at DateTime    @default(now())
+
+  @@index([user_id])
+}
+
+enum LoyaltyType {
+  EARNED
+  SPENT
+  REFUNDED
+}
+
+model ChatMessage {
+  id             String   @id @default(uuid()) @db.Uuid
+  sender_id      String   @db.Uuid
+  sender         User     @relation("SentMessages", fields: [sender_id], references: [id])
+  receiver_id    String   @db.Uuid
+  receiver       User     @relation("ReceivedMessages", fields: [receiver_id], references: [id])
+  content        String   @db.Text
+  attachment_url String?  @db.VarChar(255)
+  is_read        Boolean  @default(false)
+  created_at     DateTime @default(now())
+
+  @@index([sender_id, receiver_id])
+}
+
+model OrderVoucher {
+  order_id   String  @db.Uuid
+  order      Order   @relation(fields: [order_id], references: [id])
+  voucher_id String  @db.Uuid
+  voucher    Voucher @relation(fields: [voucher_id], references: [id])
+
+  @@id([order_id, voucher_id])
+}
+
+model PromotionCampaign {
+  id         String          @id @default(uuid()) @db.Uuid
+  store_id   String          @db.Uuid
+  store      Store           @relation(fields: [store_id], references: [id])
+  name       String          @db.VarChar(255)
+  status     PromoStatus     @default(PENDING)
+  start_time DateTime
+  end_time   DateTime
+  
+  items      PromotionItem[]
+
+  @@index([store_id])
+}
+
+enum PromoStatus {
+  PENDING
+  ACTIVE
+  ENDED
+}
+
+model PromotionItem {
+  campaign_id String            @db.Uuid
+  campaign    PromotionCampaign @relation(fields: [campaign_id], references: [id])
+  variant_id  String            @db.Uuid
+  variant     Variant           @relation(fields: [variant_id], references: [id])
+  promo_price Decimal           @db.Decimal(15, 2)
+
+  @@id([campaign_id, variant_id])
 }
 ```
 

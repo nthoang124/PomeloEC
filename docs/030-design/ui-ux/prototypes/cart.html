@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giỏ hàng - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .cart-layout {
+        grid-template-columns: 2fr 1fr !important;
+      }
+
+      .cart-item {
+        display: flex;
+        gap: var(--sp-4);
+        align-items: center;
+        padding: var(--sp-4);
+        background: rgba(255, 255, 255, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--sp-4);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .qty-control {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        padding: 4px;
+        border-radius: var(--radius-full);
+      }
+
+      .qty-btn {
+        width: 30px;
+        height: 30px;
+        background: #f3f4f6;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+      .qty-btn:hover {
+        background: #e5e7eb;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--sp-3);
+        color: var(--color-text-main);
+        font-size: 0.95rem;
+      }
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: var(--sp-4);
+        padding-top: var(--sp-4);
+        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+
+      input[type="checkbox"] {
+        accent-color: var(--color-matcha);
+        transform: scale(1.3);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Header -->
+      <header class="app-nav">
+        <a
+          href="home.html"
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+          "
+        >
+          <span
+            style="
+              font-size: 1.8rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </a>
+        <span style="font-weight: 600; color: var(--color-text-muted)"
+          >Giỏ hàng của bạn 🛒</span
+        >
+      </header>
+
+      <main class="app-content cart-layout">
+        <!-- Left Column: Cart Items -->
+        <div style="display: flex; flex-direction: column">
+          <div class="glass-box" style="margin-bottom: var(--sp-6)">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+                padding-bottom: 12px;
+                margin-bottom: 16px;
+              "
+            >
+              <label
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  font-weight: 700;
+                  cursor: pointer;
+                "
+              >
+                <input type="checkbox" checked /> Chọn tất cả (2)
+              </label>
+              <button
+                style="
+                  background: transparent;
+                  border: none;
+                  color: #f43f5e;
+                  cursor: pointer;
+                  font-weight: 600;
+                "
+              >
+                Xóa tất cả
+              </button>
+            </div>
+
+            <!-- Cart Item 1 -->
+            <div class="cart-item">
+              <input type="checkbox" checked />
+              <div
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background: rgba(255, 255, 255, 0.8);
+                  border-radius: var(--radius-sm);
+                  font-size: 3rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                🍓
+              </div>
+              <div style="flex: 1">
+                <h3 class="text-sm font-bold">
+                  Dâu tây Mộc Châu túi 500g loại 1
+                </h3>
+                <p class="text-xs text-muted" style="margin-top: 4px">
+                  Phân loại: Hộp nhựa
+                </p>
+                <div
+                  class="user-action"
+                  style="
+                    margin-top: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--sp-4);
+                  "
+                >
+                  <div class="qty-control">
+                    <button class="qty-btn">-</button>
+                    <span class="font-bold">1</span>
+                    <button class="qty-btn">+</button>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  text-align: right;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  height: 80px;
+                "
+              >
+                <button
+                  style="
+                    align-self: flex-end;
+                    background: transparent;
+                    border: none;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    opacity: 0.5;
+                  "
+                >
+                  🗑️
+                </button>
+                <div
+                  class="font-bold"
+                  style="font-size: 1.25rem; color: #f43f5e"
+                >
+                  125.000₫
+                </div>
+              </div>
+            </div>
+
+            <!-- Cart Item 2 -->
+            <div class="cart-item">
+              <input type="checkbox" checked />
+              <div
+                style="
+                  width: 80px;
+                  height: 80px;
+                  background: rgba(255, 255, 255, 0.8);
+                  border-radius: var(--radius-sm);
+                  font-size: 3rem;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                🥬
+              </div>
+              <div style="flex: 1">
+                <h3 class="text-sm font-bold">Bắp cải tím Đà Lạt VietGAP</h3>
+                <p class="text-xs text-muted" style="margin-top: 4px">
+                  Phân loại: Củ 1kg
+                </p>
+                <div
+                  class="user-action"
+                  style="
+                    margin-top: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--sp-4);
+                  "
+                >
+                  <div class="qty-control">
+                    <button class="qty-btn">-</button>
+                    <span class="font-bold">2</span>
+                    <button class="qty-btn">+</button>
+                  </div>
+                </div>
+              </div>
+              <div
+                style="
+                  text-align: right;
+                  display: flex;
+                  flex-direction: column;
+                  justify-content: space-between;
+                  height: 80px;
+                "
+              >
+                <button
+                  style="
+                    align-self: flex-end;
+                    background: transparent;
+                    border: none;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    opacity: 0.5;
+                  "
+                >
+                  🗑️
+                </button>
+                <div
+                  class="font-bold"
+                  style="font-size: 1.25rem; color: #f43f5e"
+                >
+                  70.000₫
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Summary & Checkout button -->
+        <div>
+          <div class="glass-box" style="position: sticky; top: 0">
+            <h2 style="margin-bottom: var(--sp-4)">Tạm tính</h2>
+
+            <div class="summary-row">
+              <span>Giá trị sản phẩm (2)</span>
+              <span class="font-bold">195.000₫</span>
+            </div>
+            <div class="summary-row text-xs text-muted">
+              <span>Thuế VAT</span>
+              <span>Đã bao gồm</span>
+            </div>
+
+            <div class="summary-total">
+              <span>Tổng cộng</span>
+              <span style="font-size: 1.5rem; color: #f43f5e">195.000₫</span>
+            </div>
+
+            <p
+              class="text-xs text-muted"
+              style="text-align: center; margin-top: 8px"
+            >
+              Tiếp tục sang trang thanh toán để chọn vận chuyển và voucher.
+            </p>
+
+            <button
+              class="btn-glass"
+              style="
+                margin-top: var(--sp-6);
+                background: rgba(16, 185, 129, 0.8);
+                color: white;
+                padding: 16px;
+                font-size: 1.1rem;
+              "
+              onclick="window.location.href = 'checkout.html'"
+            >
+              CHUYỂN ĐẾN THANH TOÁN
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

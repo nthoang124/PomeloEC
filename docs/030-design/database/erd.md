@@ -72,6 +72,9 @@ erDiagram
         enum status "PENDING_PAYMENT | PAID | SHIPPED | DELIVERED"
         decimal total_amount
         string shipping_tracking_code
+        string affiliate_id "KOC id"
+        int risk_score "Fraud score"
+        boolean is_fraud_suspect
         datetime created_at
     }
 
@@ -84,6 +87,97 @@ erDiagram
         decimal discount_applied
     }
 
+    %% Extended Modules
+    REVIEW {
+        uuid id PK
+        uuid user_id FK
+        uuid order_item_id FK "UK (1 item -> 1 review)"
+        uuid variant_id FK
+        int rating_star
+        string comment
+        string media_urls "JSON Array"
+        datetime created_at
+    }
+
+    INVENTORY_LEDGER {
+        uuid id PK
+        uuid variant_id FK
+        enum type "IN | OUT | RETURNED"
+        int quantity_change
+        string reason
+        datetime created_at
+    }
+
+    VOUCHER {
+        uuid id PK
+        string code UK
+        enum discount_type "PERCENTAGE | FIXED"
+        decimal max_discount
+        int quota
+        datetime expiry_date
+    }
+
+    PAYMENT_TRANSACTION {
+        uuid id PK
+        uuid order_id FK
+        string txn_ref UK
+        decimal amount
+        enum provider "VNPAY | MOMO | COD"
+        enum status "PENDING | SUCCESS | FAILED | REFUNDED"
+        string gateway_response "JSON Log"
+        datetime created_at
+    }
+
+    %% Phase 2 Modules
+    RETURN_REQUEST {
+        uuid id PK
+        uuid order_id FK
+        string reason
+        string media_urls "JSON Array"
+        enum status "PENDING | ACCEPTED | REJECTED"
+        decimal refund_amount
+        datetime created_at
+    }
+
+    LOYALTY_LEDGER {
+        uuid id PK
+        uuid user_id FK
+        uuid order_id FK "Nullable"
+        decimal amount
+        enum type "EARNED | SPENT | REFUNDED"
+        datetime created_at
+    }
+
+    CHAT_MESSAGE {
+        uuid id PK
+        uuid sender_id FK
+        uuid receiver_id FK
+        string content
+        string attachment_url
+        boolean is_read
+        datetime created_at
+    }
+
+    ORDER_VOUCHER {
+        uuid order_id FK
+        uuid voucher_id FK
+    }
+
+    PROMOTION_CAMPAIGN {
+        uuid id PK
+        uuid store_id FK
+        string name
+        enum status "PENDING | ACTIVE | ENDED"
+        datetime start_time
+        datetime end_time
+    }
+
+    PROMOTION_ITEM {
+        uuid campaign_id FK
+        uuid variant_id FK
+        decimal promo_price
+    }
+
     %% Relationships
     USER ||--o{ ADDRESS : "has_many"
     USER ||--o| STORE : "owns (If Seller)"
@@ -94,6 +188,26 @@ erDiagram
 
     ORDER ||--|{ ORDER_ITEM : "contains"
     VARIANT ||--o{ ORDER_ITEM : "sold_as"
+
+    %% Extended Relationships
+    USER ||--o{ REVIEW : "writes"
+    ORDER_ITEM ||--o| REVIEW : "can_be_reviewed"
+    VARIANT ||--o{ REVIEW : "has_reviews"
+
+    VARIANT ||--o{ INVENTORY_LEDGER : "has_stock_history"
+    ORDER ||--o{ PAYMENT_TRANSACTION : "paid_via"
+
+    %% Phase 2 Relationships
+    ORDER ||--o| RETURN_REQUEST : "has_RMA"
+    USER ||--o{ CHAT_MESSAGE : "sends/receives"
+    USER ||--o{ LOYALTY_LEDGER : "has_coin_history"
+
+    ORDER ||--o{ ORDER_VOUCHER : "uses"
+    VOUCHER ||--o{ ORDER_VOUCHER : "applied_to"
+
+    STORE ||--o{ PROMOTION_CAMPAIGN : "runs"
+    PROMOTION_CAMPAIGN ||--|{ PROMOTION_ITEM : "includes"
+    VARIANT ||--o{ PROMOTION_ITEM : "discounted_in"
 ```
 
 ## Giải Thích Chỉ Tên Khóa Ngoại Ràng Buộc (Constraints Explanation)

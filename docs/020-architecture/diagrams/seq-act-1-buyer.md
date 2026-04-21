@@ -7,7 +7,7 @@ owner: "@system-analyst"
 
 # Sequence & Activity - Nhóm 1: Buyer
 
-## UC-01: Tìm kiếm Sản phẩm Elasticsearch
+## UC-01: Tìm & Xem Chi tiết SP
 **Activity Diagram**
 ```mermaid
 flowchart TD
@@ -51,7 +51,7 @@ sequenceDiagram
     Cart-->>U: Trả Dữ liệu Checkout
 ```
 
-## UC-03 & UC-06: Checkout Flash Sale & Áp Mã Giảm Giá
+## UC-03 & UC-06: Mua Hàng & Áp Mã Giảm Giá
 **Activity Diagram**
 ```mermaid
 flowchart TD
@@ -122,7 +122,7 @@ sequenceDiagram
     BE-->>U: Done
 ```
 
-## UC-10: Đánh Giá 5 Sao Video
+## UC-10: Đánh Giá Sản Phẩm (Text/Video)
 **Activity Diagram**
 ```mermaid
 flowchart TD

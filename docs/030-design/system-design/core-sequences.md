@@ -12,7 +12,7 @@ updated: 2026-04-17
 
 Tài liệu này xác định các quy trình sống còn của nền tảng (Critical Paths) thông qua các Biểu đồ tuần tự (Sequence Diagrams), đảm bảo kỹ sư lập trình hiểu rõ luồng xử lý và chống bế tắc/race-condition.
 
-## 1. UC-03: Luồng Checkout & Khóa Tồn Kho Bằng Redis (Flash Sale)
+## 1. UC-03: Luồng Mua Hàng & Khóa Tồn Kho Bằng Redis (Flash Sale/Standard)
 
 Quy trình này mô tả việc một người dùng gửi yêu cầu Checkout. Mục tiêu tối thượng của hệ thống là không được phép gọi CSDL PostgreSQL để kiểm tra tồn kho (Nút thắt cổ chai), mà phải xử lý nguyên tử qua Redis Lua Script.
 

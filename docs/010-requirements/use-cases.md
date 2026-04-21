@@ -36,7 +36,7 @@ Tài liệu rã băng các tương tác chính của người dùng dựa trên 
 
 ## Nhóm 1: Dành cho Khách hàng (Buyer)
 
-### UC-01: Tìm kiếm & Lọc Sản phẩm tốc độ cao
+### UC-01: Tìm & Xem Chi tiết Sản phẩm
 - **Trigger:** Người dùng gõ từ khóa vào thanh tìm kiếm hoặc tích chọn bộ lọc (Giá, Kích cỡ, Tỉnh/Thành).
 - **Hành vi hệ thống:**
   1. API gọi trực tiếp vào cluster **Elasticsearch** (thay vì DB) để trích xuất danh sách SKU khớp với từ khóa.
@@ -50,7 +50,7 @@ Tài liệu rã băng các tương tác chính của người dùng dựa trên 
   2. Khi vào trang Checkout, API gọi sang các hãng phân phối vận chuyển (**GHTK, ViettelPost**) để tính biểu phí Ship theo khoảng cách (Giữa kho của seller và địa chỉ của Buyer).
 - **Phân tách Đơn:** Nếu khách mua từ 3 Sellers khác nhau, hệ thống tự động tách thành 3 Đơn hàng (Sub-orders) con để giao đi độc lập.
 
-### UC-03: Thanh toán & Chốt Đơn (High-TPS Flash Sale)
+### UC-03: Mua Hàng & Thanh toán
 - **Trigger:** Bấm "Thanh toán".
 - **Hành vi hệ thống (Luồng then chốt):**
   1. **Nhận diện Tồn kho:** Hệ thống chạy hàm **Redis Lua Script** để khóa trừ số lượng SKU trên RAM (Thời gian 1-2 mili-giây).
@@ -86,11 +86,11 @@ Tài liệu rã băng các tương tác chính của người dùng dựa trên 
   2. Đổi trạng thái sang DISPUTE_OPENED (Tranh chấp). Mở luồng chat cho 2 bên up hình ảnh bằng chứng.
   3. Nếu Admin sàn phán quyết Buyer thắng -> Gọi API Refund của VNPay/MoMo để đảo ngược dòng tiền, trả về thẻ cho Buyer.
 
-### UC-10: Đánh giá Sản phẩm (Rating & Reviews)
+### UC-10: Đánh giá Sản phẩm (Text/Video)
 - **Trigger:** Đơn hàng chuyển sang Delivered (Đã giao), khách bấm "Đã nhận hàng" và đánh giá 5 sao kèm Video/Ảnh.
 - **Hành vi hệ thống:**
   1. Validate Verified Purchase (Chắc chắn user này đã mua thành công SKU này).
-  2. App/Web gọi lấy AWS S3 Pre-signed URL, sau đó App đẩy thẳng Video/Ảnh lên Cloud S3. (Tuyệt đối không đẩy file xuyên qua Server NestJS để tránh nghẽn RAM).
+  2. Hỗ trợ đánh giá đa phương tiện: Đánh giá Text kèm Upload Video/Ảnh. Phần Text được ghi thẳng vào DB. Phần Media App/Web sẽ lấy AWS S3 Pre-signed URL và upload thẳng file lên Cloud S3 (Tuyệt đối không đẩy file xuyên qua Server NestJS để tránh nghẽn RAM).
   3. Đẩy Job vào Queue. Worker chạy nền sẽ tính toán lại Điểm đánh giá trung bình (Avg Rating) của Sản phẩm đó và đồng bộ sang Elasticsearch.
 
 ### UC-15: Trò chuyện Trực tuyến (Real-time Chat Buyer ↔ Seller)

@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        /* Uses the global aurora mesh from styles.css */
+        padding: 0;
+        margin: 0;
+      }
+
+      .auth-container {
+        width: 100%;
+        max-width: 450px;
+        padding: var(--sp-8);
+        z-index: 10;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: var(--sp-6) 0;
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
+      }
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(0, 0, 0, 0.1);
+      }
+      .divider::before {
+        margin-right: 12px;
+      }
+      .divider::after {
+        margin-left: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div style="text-align: center; margin-bottom: var(--sp-6)">
+        <h1
+          style="
+            color: #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+          "
+        >
+          <span
+            style="
+              font-size: 2.5rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </h1>
+        <p class="text-muted" style="margin-top: 8px; font-weight: 600">
+          Nông sản chuẩn VietGAP
+        </p>
+      </div>
+
+      <div class="glass-box" style="padding: var(--sp-8)">
+        <h2 style="margin-bottom: var(--sp-6); text-align: center">
+          Đăng nhập
+        </h2>
+
+        <form
+          onsubmit="
+            event.preventDefault();
+            window.location.href = 'home.html';
+          "
+        >
+          <div style="margin-bottom: var(--sp-4)">
+            <label
+              class="text-xs font-bold"
+              style="display: block; margin-bottom: 8px"
+              >Số điện thoại hoặc Email</label
+            >
+            <input
+              type="text"
+              class="glass-input"
+              placeholder="Nhập số điện thoại..."
+            />
+          </div>
+
+          <div style="margin-bottom: var(--sp-6)">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+              "
+            >
+              <label class="text-xs font-bold">Mật khẩu</label>
+              <a href="#" class="text-xs text-muted">Quên mật khẩu?</a>
+            </div>
+            <input type="password" class="glass-input" placeholder="••••••••" />
+          </div>
+
+          <button
+            type="submit"
+            class="btn-glass"
+            style="background: rgba(16, 185, 129, 0.8); color: white"
+          >
+            Đăng nhập
+          </button>
+        </form>
+
+        <div class="divider">HOẶC</div>
+
+        <button
+          class="btn-glass"
+          style="margin-bottom: 12px; font-weight: 600"
+          onclick="alert('Google SSO Called')"
+        >
+          <span style="font-size: 1.25rem; margin-right: 8px">G</span> Đăng nhập
+          với Google
+        </button>
+        <button class="btn-glass" style="font-weight: 600">
+          <span style="font-size: 1.25rem; margin-right: 8px">💬</span> Nhận mã
+          OTP Zalo
+        </button>
+
+        <div style="text-align: center; margin-top: var(--sp-6)">
+          <span class="text-sm text-muted">Chưa có tài khoản?</span>
+          <a href="#" class="text-sm font-bold" style="color: #f43f5e"
+            >Đăng ký ngay</a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
