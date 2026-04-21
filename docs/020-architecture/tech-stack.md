@@ -5,37 +5,46 @@ status: approved
 project: PomeloEC
 owner: "@lead-architect"
 created: 2026-04-17
-updated: 2026-04-17
+updated: 2026-04-22
 ---
 
-# Lựa chọn Công nghệ (Tech Stack)
+# Lựa chọn Công nghệ (Enterprise Tech Stack)
 
-Dựa trên yêu cầu của PRD và các tiêu chuẩn bảo mật/kỹ thuật khắt khe, đây là bộ công cụ định hình cho việc phát triển dự án. 
+Dựa trên yêu cầu của PRD và các tiêu chuẩn bảo mật/kỹ thuật khắt khe (Zero-Trust), đây là bộ công cụ định hình cho việc phát triển dự án. Hạ tầng đã được nâng cấp lên mô hình Enterprise với khả năng chia nhỏ trách nhiệm (Decoupled Architectures).
 
-## 1. Hệ Sinh Thái Phát Triển Tập Trung
+## 1. Hệ Sinh Thái Phát Triển Tập Trung & Ứng Dụng
 
 | Lớp | Công nghệ | Lý do lựa chọn (Trade-offs & ROI) |
 |---|---|---|
 | **Ngôn ngữ** | **TypeScript (Strict Mode)** | An toàn kiểu tĩnh (Type safety) tuyệt đối với Interface. Loại bỏ 80% bug runtime (đặc biệt trong E-commerce tiền bạc). |
 | **Gói quản lý** | **pnpm (Monorepo)** | Tốc độ cài đặt x3 npm. Tiết kiệm ổ cứng. Khả năng cô lập Workspace (Frontend, Backend, Packages) trơn tru hoàn hảo. |
-| **Framework** | **NestJS 10+** | Architecture mặc định rất sạch. Tự ép khuôn kiến trúc Modular/Dependency Injection, chặn Dev code rác so với Express js trần. |
+| **Backend API** | **NestJS 10+** | Đóng vai trò Business Logic Gateway. Nhận Token, kiểm tra quyền và điều phối logic giao dịch phức tạp. Ép khuôn kiến trúc Modular/Dependency Injection. |
+| **Mặt tiền (Frontend)** | **Next.js 15 (App Router)** | Tối ưu SEO, Web Vitals và UX. Sử dụng thư viện `next-auth` tích hợp giao diện liền mạch. |
 
-## 2. Hạ Tầng Dữ Liệu (Database & Middleware)
+## 2. Hạ Tầng Dữ Liệu Tối Cao (BaaS & Database)
 
 | Component | Công nghệ | Bối cảnh sử dụng |
 |---|---|---|
-| **Relational DB** | **PostgreSQL 16** | Chứa data tĩnh, ACID. (Orders, Users, Ledgers). An toàn tiền bạc trên hết. Dùng Partitioning nếu bảng Orders quá lớn. |
-| **ORM** | **Prisma** | Code Type-Safe tuyệt đối. Sinh Migration tốt. (Dự định tương lai nếu Query phức tạp có thể bóp Kysely nhưng hiện do tốc độ Go-to-market nên ưu tiên Prisma). |
-| **In-Memory Store** | **Redis 7** | Backbone của FlashSale. Quản lý Cache, Session, Lua Script (Chống bán âm Overselling) và Rate-Limit ở cồng Gateway. |
-| **Message Broker** | **Apache Kafka (KRaft)** | Thông lượng cực cao. Tránh tình trạng sập nghẽn, đảm bảo mất điện cúp cầu dao không mất message (Persistent log). |
-| **Search Engine** | **Elasticsearch** | Phân tích Filter Text, Phân trang nhạy cảm, Fulltext-Search mạnh mẽ, hỗ trợ Boost Rank / Recommendation Feed. |
-| **Job Queue** | **BullMQ** | Quản lý Delay Queue cho hủy đơn (15 phút), Retry Exponential Backoff khi API GHTK lỗi 500. Trực quan. |
+| **Relational DB** | **Supabase PostgreSQL** | Lưu trữ cốt lõi ACID. Tận dụng sức mạnh BaaS của Supabase, tự động có sãn connection pooling (Supavisor) và backup chuyên nghiệp. |
+| **Object Storage**| **Supabase Storage** | Thay thế AWS S3 để tiết kiệm chi phí tích hợp. Chứa Avatar, Video, Hình ảnh sản phẩm. Client upload trực tiếp qua SDK. |
+| **ORM** | **Prisma** | Mapping Model 1-1 với DB Supabase. Sinh Migration Type-Safe. Ép logic kết nối an toàn. |
 
-## 3. DevOps & Quan Sát (Observability)
+## 3. Quản Trị Trọng Yếu & Phân Tích (IAM & Analytics)
 
-- **Containerization**: **Docker** & **Docker Compose** (Cho Local/Staging). 
-- **CI/CD**: TBD (Dự kiến GitHub Actions / Jenkins).
-- **Log Management**: **Pino** (Sinh log định dạng JSON trực tiếp cho máy đọc, nhanh gấp 5 lần Winston).
-- **Tracing**: Tương lai chuẩn bị đục lỗ **OpenTelemetry**. Code cần attach Trace-ID/Correlation-ID vào từng HTTP Request (Bắt buộc theo rule Error-Handling).
+| Component | Công nghệ | Bối cảnh sử dụng |
+|---|---|---|
+| **Identity / SSO** | **Keycloak** | Máy chủ Ủy quyền (Identity Provider) độc lập. Xử lý chuẩn OIDC/OAuth2, tự lo form Đăng nhập, MFA, và Federation. Cắt bỏ gánh nặng build Auth ở NestJS. |
+| **Analytics (OLAP)**| **ClickHouse** | Cơ sở dữ liệu cột (Column-oriented DB) chuyên biệt cho Time-Series & Khối lượng dữ liệu khổng lồ. Phục vụ tính nhanh Doanh thu Seller, Lượt xem SP. |
+| **Change Data Capture**| **Debezium** | Gắn thẳng vào WAL (Write-Ahead Log) của Postgres Supabase. Tự động mót từng Record thay đổi ở bảng Orders đẩy qua Kafka -> ClickHouse mà không cần code Dual-Write. |
+| **Message Broker**| **Apache Kafka (KRaft)**| Trái tim của sự kiện (Event-Bus). Nạp dữ liệu Streaming siêu tốc từ Debezium để chia luồng tin nhắn đi các Modules và Sync Data. |
 
-Ràng buộc (Constraint): Mọi công nghệ nếu không có tên trong danh sách này BẮT BUỘC phải viết 1 bản `architecture-decisions` (ADR) xin trình duyệt trước khi gài vào Source Code.
+## 4. Tốc Độ, DevOps & Quan Sát (Cache & Observability)
+
+- **In-Memory Store**: **Redis 7** (Luôn bật). Cứu cánh lưu Giỏ Hàng tạm, Rate Limit, Khóa Tồn Kho bằng Lua Script nguyên tử và Pre-warm Cache FlashSale.
+- **Containerization**: **Docker** & **Docker Compose** (Dành cho việc boot cụm Kafka, Redis, Keycloak, Clickhouse ở dưới Local).
+- **Log Management**: **Pino** (Sinh log JSON cho máy đọc, nhanh gấp 5 lần Winston).
+- **Tracing**: Sẽ đục lỗ OpenTelemetry. Bắt buộc attach Trace-ID vào mỗi luồng xử lý.
+
+---
+> [!CAUTION]  
+> Mọi thư viện/tool nào không nằm trong danh sách này bị NGHIÊM CẤM đưa vào Codebase (cắm flag `npm install`) nếu chưa có văn bản ADR trình qua Lead Architect phê duyệt (Chuẩn YAGNI).

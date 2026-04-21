@@ -1,101 +1,106 @@
 ---
 id: ARCH-001
 type: architecture
-status: review
+status: approved
 project: PomeloEC
 owner: "@solution-architect"
 linked-to: [[prd]], [[use-cases]], [[user-stories]]
 created: 2026-04-17
-updated: 2026-04-17
+updated: 2026-04-22
 ---
 
-# Tổng quan Kiến trúc Hệ thống (System Overview)
+# Tổng quan Kiến trúc Hệ thống (Enterprise System Overview)
 
-Tài liệu này mô tả bức tranh vĩ mô của sàn thương mại điện tử **PomeloEC** bằng C4 Model. Kiến trúc chủ đạo là **Modular Monolith**, hướng đến mục tiêu chịu tải 10K TPS trong đợt kết hợp Flash Sale.
+Tài liệu này mô tả bức tranh vĩ mô của sàn thương mại điện tử **PomeloEC** bằng C4 Model. Kiến trúc đã được nâng cấp lên chuẩn **Enterprise Modular Monolith + Decoupled Infrastructure**, định tuyến rõ ràng giữa hệ thống Giao dịch (OLTP) và Phân tích (OLAP), hướng đến mục tiêu chịu tải 10K TPS.
 
 ## 1. C4 - Context Diagram (Mức Ngữ cảnh)
 
-Sơ đồ mô tả sự tương tác giữa Người dùng cuối (Buyer, Seller, Admin) với Hệ thống PomeloEC và các tích hợp phía bên ngoài (Cổng thanh toán, Hãng giao nhận).
+Sơ đồ mô tả sự tương tác giữa Người dùng cuối với Hệ thống PomeloEC và khối Identity Provider riêng biệt (Keycloak).
 
 ```mermaid
 C4Context
-  title System Context diagram for PomeloEC Marketplace
+  title System Context diagram for PomeloEC Enterprise
 
   Person(buyer, "Buyer", "Khách hàng mua sắm, tìm kiếm sản phẩm và thanh toán")
-  Person(seller, "Seller", "Nhà bán hàng, quản lý kho, in vận đơn")
-  Person(admin, "Admin Sàn", "Kiểm duyệt KYC, đối soát nội bộ")
-
-  System(pomeloEC, "PomeloEC Platform", "Hệ thống sàn Thương mại Điện tử B2B2C lõi")
+  Person(seller, "Seller", "Nhà bán hàng, theo dõi dashboard realtime")
+  
+  System_Ext(keycloak, "Keycloak (IAM)", "Identity Provider: Quản lý Xác thực, SSO, OIDC, User Pool")
+  
+  System(pomeloEC, "PomeloEC Platform", "Hệ thống sàn Thương mại Điện tử lõi (Giao dịch & Thống kê)")
 
   System_Ext(paymentGateway, "Payment Gateway", "VNPay / MoMo xử lý giao dịch")
   System_Ext(logistics, "Logistics Partners", "GHTK / ViettelPost cung cấp phí ship và vận chuyển")
-  System_Ext(firebase, "Firebase Cloud Messaging", "Push Notifications")
 
-  Rel(buyer, pomeloEC, "Tìm kiếm, Giỏ hàng, Mua sắm", "HTTPS/WSS")
-  Rel(seller, pomeloEC, "Quản lý tồn kho, Fulfillment", "HTTPS")
-  Rel(admin, pomeloEC, "Vận hành và Đối soát", "HTTPS")
+  Rel(buyer, keycloak, "Đăng nhập / Đăng ký / SSO", "OIDC/HTTPS")
+  Rel(seller, keycloak, "Đăng nhập / 2FA", "OIDC/HTTPS")
 
+  Rel(buyer, pomeloEC, "Giao dịch bằng OIDC Token", "HTTPS/WSS")
+  Rel(seller, pomeloEC, "Đăng sản phẩm, Đọc Dashboard Analytics", "HTTPS")
+
+  Rel(pomeloEC, keycloak, "Xác thực JWT Signature (Verify)", "JWKS/HTTPS")
   Rel(pomeloEC, paymentGateway, "Tạo link thanh toán & nhận Webhook", "HTTPS")
   Rel(pomeloEC, logistics, "Lấy biểu phí & Pushing Vận đơn", "HTTPS")
-  Rel(pomeloEC, firebase, "Đẩy thông báo Realtime", "HTTPS")
 ```
 
-## 2. C4 - Container Diagram (Mức Ứng dụng/Infrastructure)
+## 2. C4 - Container Diagram (Luồng dữ liệu cấp Hạ tầng)
 
-Sơ đồ kiến giải cách mà Modular Monolith giao tiếp với CSDL Cơ bản và các bộ nhớ phân tán. Mặc dù là một Backend duy nhất (Node.js Process), nhưng bên dưới được chống lưng bởi dàn Data-store hạng nặng.
+Sơ đồ kiến giải Data Pipeline và Event-Driven Architecture. NestJS đóng vai trò API Gateway & Business Logic, Supabase hứng dữ liệu hạt nhân, CDC bắt Log thời gian thực đẩy qua Kafka và chốt trạm tại ClickHouse.
 
 ```mermaid
 C4Container
-  title Container diagram for PomeloEC Platform
+  title Container diagram for PomeloEC Infrastructure
 
-  Person(buyer, "Buyer", "Khách mua")
+  Person(user, "Người dùng", "Buyer / Seller")
+  System_Ext(keycloak, "Keycloak Server", "Identity Management")
   
-  System_Boundary(c1, "PomeloEC Monolithic Context") {
-    Container(webApp, "Pomelo Web/App", "Astro/React Native", "Client-side rendering & interactions")
-    
-    Container(apiGateway, "API Gateway / BFF", "NestJS", "Reverse proxy, Rate limiting, Authentication")
-    
-    Container(coreBackend, "Core Monolith", "NestJS", "Chứa toàn bộ logic các Domain: Identity, Catalog, Order, Loyalty")
-    
-    Container(workerQueue, "Background Workers", "NestJS + BullMQ", "Consumer xử lý Job bất đồng bộ")
+  System_Boundary(c1, "PomeloEC Application Layer") {
+    Container(webApp, "Pomelo Web/App", "Next.js", "SSR/CSR, Tích hợp Next-Auth")
+    Container(coreBackend, "Core Monolith", "NestJS", "API Gateway & Business Logic (Cart, Order, Payment)")
+    Container(analyticsService, "Analytics Service", "NestJS/Go", "Tiếp nhận query báo cáo, Dashboard từ Seller/Admin")
   }
 
-  ContainerDb(postgres, "Primary Database", "PostgreSQL (Prisma)", "Lưu trữ dữ liệu ACID: Auth, Ledger, Orders")
-  ContainerDb(redis, "In-memory Engine", "Redis 7", "Chạy Lua Script cho Tồn kho, Session, Rate-limit, Idempotency")
-  ContainerDb(kafka, "Event Stream", "Apache Kafka (KRaft)", "Message Bus nội bộ giãn cách gọi API giữa các Module")
-  ContainerDb(elasticsearch, "Search Engine", "Elasticsearch", "Lập chỉ mục tìm kiếm SKU & Recommendation")
-  ContainerDb(s3, "Object Storage", "Supabase Storage/S3", "Chứa File hình ảnh, Video review, PDF Vận đơn")
+  System_Boundary(c2, "PomeloEC Data Layer") {
+    ContainerDb(postgres, "Primary DB", "Supabase Postgres", "OLTP: Chứa Order, Catalog, Escrow")
+    ContainerDb(storage, "Object Storage", "Supabase Storage", "CDN File (Avatar, Video, Images)")
+    ContainerDb(redis, "In-memory Engine", "Redis 7", "Cache, Rate-limit, Lua Script Khóa Tồn kho")
+    ContainerDb(clickhouse, "Analytics DB", "ClickHouse", "OLAP: Tính tổng doanh thu, lượt view")
+  }
 
-  Rel(buyer, webApp, "Sử dụng")
-  Rel(webApp, apiGateway, "Gọi API", "JSON/HTTPS")
-  Rel(apiGateway, coreBackend, "Điều hướng & Chặn đứng rủi ro")
-  Rel(apiGateway, redis, "Rate-limit & Banned IP", "TCP")
-  
-  Rel(coreBackend, postgres, "Ghi SQL Transaction", "TCP/5432")
+  System_Boundary(c3, "PomeloEC Event Streaming Layer") {
+    Container(debezium, "CDC Engine", "Debezium", "Cắm mút WAL (Write-Ahead Log) của Postgres")
+    ContainerDb(kafka, "Event Stream", "Apache Kafka", "Message Bus chịu tải cao")
+  }
+
+  Rel(user, webApp, "Sử dụng")
+  Rel(webApp, keycloak, "Lấy Token (Next-Auth)")
+  Rel(webApp, coreBackend, "API calls (Kèm Token)", "HTTPS")
+  Rel(webApp, analyticsService, "Xem biểu đồ (Dashboard)", "HTTPS")
+  Rel(webApp, storage, "Upload/Download trực tiếp (SDK)", "HTTPS")
+
+  Rel(coreBackend, keycloak, "Xác nhận tính hợp lệ Token")
+  Rel(coreBackend, postgres, "Giao dịch ACID (Prisma)", "TCP/5432")
   Rel(coreBackend, redis, "Gọi Lua Script (Khóa tồn kho)", "TCP/6379")
-  Rel(coreBackend, elasticsearch, "Query Search & Filter", "HTTP/9200")
-  Rel(coreBackend, kafka, "Publish Domain Events (OrderCreated)", "TCP/9092")
   
-  Rel(workerQueue, kafka, "Consume Events", "TCP/9092")
-  Rel(workerQueue, postgres, "Reconciliation & Async Write", "TCP/5432")
+  Rel(postgres, debezium, "Streaming WAL (Row changes)", "Replication")
+  Rel(debezium, kafka, "Biến đổi thành Domain Events", "TCP")
+  
+  Rel(analyticsService, kafka, "Consume Events (Orders, Clicks)", "TCP")
+  Rel(analyticsService, clickhouse, "Ghi/Đọc data OLAP", "TCP")
 ```
 
-## 3. Kiến trúc Core Module (Logical Architecture)
+## 3. Kiến trúc Luồng Dữ liệu Đặc Thù (CDC & CQRS)
 
-Theo quy tắc **Domain-Driven Design (DDD)**, thư mục của Backend sẽ chia theo các Bounded Context (Không chia theo `controllers/`, `services/` truyền thống).
+Theo yêu cầu chuẩn Enterprise:
+* **Chống Dual-Write**: Không còn tình trạng NestJS gọi `await db.save()` xong gọi tiếp `kafka.emit()`.
+* Mọi hành động làm thay đổi CSDL tại Supabase Postgres sẽ được **Debezium (CDC)** bắt trọn ở tầng hệ điều hành (Log file) và vứt vào **Kafka** với tốc độ mili-giây.
+* **CQRS ngầm định**: 
+  - Lệnh **Write** (Tạo đơn, Trừ tiền) gọi thẳng vào NestJS ➔ Supabase Postgres.
+  - Lệnh **Read báo cáo** (Xem doanh thu tuần, Phân tích Clickstream) gọi vào **Analytics Service** ➔ **ClickHouse** (Đã được đồng bộ từ Kafka). Đảm bảo tách bạch 100% Performance giữa việc Mua hàng và Xem báo cáo.
 
-### Mạng lưới Modules:
-1. **[IAM Module]:** Quản lý Identity, SSO, JWT, RBAC, KYC, Địa chỉ.
-2. **[Catalog Module]:** Quản lý Danh mục, SKU Matrix, Brand. (Đồng bộ Kafka sang Elastic).
-3. **[Inventory Module]:** Sinh tử lõi. Nắm giữ Logic khóa Tồn Kho (Redis Lua Script).
-4. **[Cart & Checkout Module]:** Tính giá Rule Engine, Prorating Voucher, Tính Ship đối tác.
-5. **[Order & Fulfillment Module]:** Quản lý State Machine đơn hàng. Giao tiếp Bulk Vận chuyển.
-6. **[Payment Module]:** Đối soát tiền Escrow. Quản lý Idempotency.
-7. **[Communication Module]:** Đẩy Socket, SMS, Push Notification.
+## 4. Quản lý Modules Chức Năng Cốt Lõi
 
-## 4. Non-Functional Requirements (NFR) Fulfillment
-
-* Làm sao để đạt **10,000 TPS** trong FlashSale?
-  -> Chặn toàn bộ Read Traffic vào DB bằng Redis Caching. Mọi tương tác Checkout Write Traffic bị ép quy về **1 lệnh Call Atom Lua Script** trên Redis để trừ Tồn kho/Voucher. Lợi dụng I/O Single-Thread của Redis để chống 100% Race Condition.
-* Hệ thống có sập dây chuyền (Cascading Failure) không?
-  -> Không. Giao tiếp qua *Kafka* (Event-Driven). Order thành công chỉ đẩy mảng JSON vô Kafka. Việc gửi Email, trừ % Hoa hồng Affiliate (chạy cực chậm) sẽ do BullMQ Worker gánh nền bất đồng bộ.
+1. **[IAM & Identity]:** ỦY QUYỀN TOÀN BỘ cho Keycloak.
+2. **[Catalog Module]:** Quản lý Danh mục, SKU Matrix. Gắn Supabase Storage.
+3. **[Inventory Module]:** Redis Lua Script nguyên tử đóng vai trò Thần giữ cửa (Gatekeeper).
+4. **[Order & Payment Layer]:** Postgres Transaction. Hứng IPN VNPay/MoMo.
+5. **[Analytics & Feed]:** Dịch vụ hoàn toàn cô lập, consume Kafka đẩy vô ClickHouse. Dùng cho trang Admin và Dashboard Thống kê Gian hàng.

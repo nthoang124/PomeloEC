@@ -1,5 +1,6 @@
 version: "3.8"
 services:
+  # 1. Cơ sở dữ liệu chính (Postgres) - Giả lập cho Supabase Local.
   postgres:
     image: postgres:15-alpine
     container_name: pomeloec_postgres
@@ -9,10 +10,13 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: pomeloec
+    # Bắt buộc bật WAL level logical để Debezium có thể bám vào đọc Log (CDC)
+    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=4", "-c", "max_wal_senders=4"]
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+  # 2. Redis - In-Memory Cache & Queue
   redis:
     image: redis:7-alpine
     container_name: pomeloec_redis
@@ -23,6 +27,7 @@ services:
     command: redis-server --appendonly yes
     restart: always
 
+  # 3. Message Broker (Kafka chuẩn KRaft mới, không cần Zookeeper)
   kafka:
     image: bitnami/kafka:latest
     container_name: pomeloec_kafka
@@ -40,7 +45,69 @@ services:
       - kafka_data:/bitnami/kafka
     restart: always
 
+  # 4. Identity & Access Management (SSO OIDC Server)
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    container_name: pomeloec_keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+    depends_on:
+      - postgres
+    restart: always
+
+  # 5. Change Data Capture (CDC Connector)
+  debezium:
+    image: quay.io/debezium/connect:2.5
+    container_name: pomeloec_debezium
+    ports:
+      - "8083:8083"
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+    depends_on:
+      - kafka
+      - postgres
+    restart: always
+
+  # 6. Analytics Database (OLAP)
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: pomeloec_clickhouse
+    ports:
+      - "8123:8123" # HTTP Port
+      - "9000:9000" # Native Client Port
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    restart: always
+
+  # 7. Phân tích Tìm kiếm (Full-Text Search Engine)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: pomeloec_elasticsearch
+    ports:
+      - "9200:9200"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    restart: always
+
 volumes:
   postgres_data:
   redis_data:
   kafka_data:
+  clickhouse_data:
+  elasticsearch_data:
