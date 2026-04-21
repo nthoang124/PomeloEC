@@ -14,7 +14,7 @@ import { APP_GUARD } from '@nestjs/core';
         process.env.KEYCLOAK_AUTH_SERVER_URL || 'http://localhost:8080',
       realm: process.env.KEYCLOAK_REALM || 'PomeloEC',
       clientId: process.env.KEYCLOAK_CLIENT_ID || 'pomelo-backend',
-      secret: process.env.KEYCLOAK_SECRET,
+      secret: process.env.KEYCLOAK_SECRET || '',
     }),
   ],
   providers: [
