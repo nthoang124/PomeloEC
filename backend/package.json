@@ -33,6 +33,7 @@
     "kafkajs": "^2.2.4",
     "nestjs-pino": "^4.6.1",
     "nestjs-zod": "^5.3.0",
+    "neverthrow": "^8.2.0",
     "pg": "^8.20.0",
     "pino": "^10.3.1",
     "pino-pretty": "^13.1.3",

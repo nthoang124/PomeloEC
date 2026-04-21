@@ -7,14 +7,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
-  
+
   // Use Pino Logger
   app.useLogger(app.get(Logger));
 
   // OpenAPI Setup (Swagger)
   const config = new DocumentBuilder()
     .setTitle('PomeloEC API')
-    .setDescription('Full Endpoint specification for the Modular Monolith Marketplace.')
+    .setDescription(
+      'Full Endpoint specification for the Modular Monolith Marketplace.',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .addSecurityRequirements('bearer')

@@ -26,12 +26,14 @@ import { BackgroundJobsModule } from './background-jobs/background-jobs.module';
             : undefined,
       },
     }),
-    
+
     // Rate Limiting (DDoS prevention) - Max 100 requests per minute by default
-    ThrottlerModule.forRoot([{
-      ttl: 60000, 
-      limit: 100,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 100,
+      },
+    ]),
 
     // Database
     PrismaModule,
