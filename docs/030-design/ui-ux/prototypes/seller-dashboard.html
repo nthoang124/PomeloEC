@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kênh Người Bán - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      /* Darker App window for Admin context */
+      .app-window-seller {
+        width: 95vw;
+        max-width: 1400px;
+        height: 90vh;
+        max-height: 900px;
+        background: rgba(17, 24, 39, 0.7); /* Slate 900 tinted */
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-glass);
+        border-radius: 40px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        color: white;
+      }
+
+      .seller-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--sp-6) var(--sp-8) 0 var(--sp-8);
+      }
+
+      .seller-layout {
+        padding: var(--sp-6) var(--sp-8);
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        gap: var(--sp-8);
+      }
+
+      .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+      }
+
+      .menu-group {
+        margin-bottom: var(--sp-6);
+      }
+      .menu-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 0 var(--sp-4);
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px var(--sp-4);
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+      }
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .menu-item.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .main-content {
+        flex: 1;
+      }
+
+      .stat-bento {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--sp-6);
+        margin-bottom: var(--sp-8);
+      }
+
+      .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-lg);
+        padding: var(--sp-6);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .stat-card.neo-primary {
+        background: linear-gradient(
+          135deg,
+          rgba(244, 63, 94, 0.8),
+          rgba(244, 63, 94, 0.4)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+
+      .stat-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        color: white;
+        padding: 10px;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        width: 100%;
+        margin-top: var(--sp-4);
+        transition: all var(--transition-fast);
+      }
+      .stat-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .chart-placeholder {
+        height: 250px;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.05),
+          rgba(255, 255, 255, 0.02)
+        );
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.5);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window-seller">
+      <!-- Seller Navigation -->
+      <header class="seller-nav">
+        <div
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <span style="font-size: 1.8rem">📦</span> Kênh Người Bán
+        </div>
+        <div style="display: flex; gap: var(--sp-4); align-items: center">
+          <span style="font-size: 0.9rem"
+            >Doanh thu hôm nay:
+            <strong style="color: #a7dba7">+ 2.500.000₫</strong></span
+          >
+          <div
+            style="
+              width: 32px;
+              height: 32px;
+              background: rgba(255, 255, 255, 0.2);
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 800;
+              border: 1px solid rgba(255, 255, 255, 0.5);
+            "
+          >
+            S
+          </div>
+        </div>
+      </header>
+
+      <div class="seller-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <div class="menu-group">
+            <div class="menu-title">Tổng quan</div>
+            <a href="seller-dashboard.html" class="menu-item active"
+              >📊 Bảng điều khiển</a
+            >
+            <a href="#" class="menu-item">💰 Chỉ số kinh doanh</a>
+          </div>
+
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Đơn hàng</div>
+            <a href="seller-orders.html" class="menu-item"
+              >📦 Tất cả đơn (\`UC-12\`)</a
+            >
+            <a href="#" class="menu-item">⚠️ Đơn khiếu nại (RMA)</a>
+          </div>
+
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Sản phẩm</div>
+            <a href="seller-products.html" class="menu-item"
+              >🏷️ Danh sách (\`UC-11\`)</a
+            >
+          </div>
+
+          <div class="menu-group">
+            <div class="menu-title">Tài chính (\`UC-05\`)</div>
+            <a href="#" class="menu-item">🏦 Số dư tài khoản</a>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: var(--sp-6);
+            "
+          >
+            <h2 style="color: white">Tổng quan kinh doanh</h2>
+            <select
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 8px 16px;
+                border-radius: var(--radius-sm);
+                outline: none;
+              "
+            >
+              <option>7 ngày qua</option>
+              <option>30 ngày qua</option>
+            </select>
+          </div>
+
+          <!-- Bento Stats -->
+          <section class="stat-bento">
+            <!-- Payout Escrow Card (\`UC-05\`) -->
+            <div
+              class="stat-card neo-primary"
+              style="
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+              "
+            >
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                "
+              >
+                <div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                    "
+                  >
+                    Số dư Khả dụng (\`UC-05\`)
+                  </div>
+                  <div
+                    style="font-size: 2rem; font-weight: 800; margin-top: 8px"
+                  >
+                    24.500.000₫
+                  </div>
+                </div>
+                <span style="font-size: 2rem">💰</span>
+              </div>
+              <button
+                class="stat-btn"
+                onclick="alert('Đã gửi lệnh rút tiền (Payout) về ngân hàng!')"
+              >
+                Rút tiền ngay
+              </button>
+            </div>
+
+            <div class="stat-card">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                "
+              >
+                <div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 700;
+                      color: rgba(255, 255, 255, 0.6);
+                    "
+                  >
+                    Đang đóng băng (Escrow)
+                  </div>
+                  <div
+                    style="font-size: 1.5rem; font-weight: 800; margin-top: 8px"
+                  >
+                    12.300.000₫
+                  </div>
+                  <div
+                    class="text-xs"
+                    style="margin-top: 4px; color: rgba(255, 255, 255, 0.5)"
+                  >
+                    Chờ khách nhận hàng
+                  </div>
+                </div>
+                <span style="font-size: 1.5rem; opacity: 0.8">🧊</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                "
+              >
+                <div>
+                  <div
+                    style="
+                      font-size: 0.875rem;
+                      font-weight: 700;
+                      color: rgba(255, 255, 255, 0.6);
+                    "
+                  >
+                    Đơn chờ giao (Pending)
+                  </div>
+                  <div
+                    style="font-size: 1.5rem; font-weight: 800; margin-top: 8px"
+                  >
+                    42 Đơn
+                  </div>
+                  <div class="text-xs" style="margin-top: 4px; color: #f43f5e">
+                    Cần in mã vạch gấp!
+                  </div>
+                </div>
+                <span style="font-size: 1.5rem; opacity: 0.8">📦</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Sub Layout -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 2fr 1fr;
+              gap: var(--sp-6);
+            "
+          >
+            <!-- Chart -->
+            <section class="stat-card">
+              <h3 style="margin-bottom: var(--sp-4)">Biểu đồ Doanh thu</h3>
+              <div class="chart-placeholder">[Biểu đồ Line Chart]</div>
+            </section>
+
+            <!-- Todo List -->
+            <section class="stat-card">
+              <h3 style="margin-bottom: var(--sp-4)">Việc cần làm</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                  padding: 12px 0;
+                "
+              >
+                <span class="text-sm">Chờ Xử Lý (Mới)</span>
+                <span
+                  style="
+                    background: rgba(244, 63, 94, 0.2);
+                    padding: 2px 8px;
+                    border-radius: 10px;
+                    font-size: 0.8rem;
+                  "
+                  >12</span
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                  padding: 12px 0;
+                "
+              >
+                <span class="text-sm">Đã đóng gói (Chờ lấy)</span>
+                <span
+                  style="
+                    background: rgba(16, 185, 129, 0.2);
+                    padding: 2px 8px;
+                    border-radius: 10px;
+                    font-size: 0.8rem;
+                  "
+                  >30</span
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  padding: 12px 0;
+                "
+              >
+                <span class="text-sm">Yêu cầu Trả hàng (RMA)</span>
+                <span
+                  style="
+                    background: rgba(245, 158, 11, 0.2);
+                    padding: 2px 8px;
+                    border-radius: 10px;
+                    font-size: 0.8rem;
+                  "
+                  >2</span
+                >
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

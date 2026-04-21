@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>In Đơn Hàng - Kênh Người Bán (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .app-window-seller {
+        width: 95vw;
+        max-width: 1400px;
+        height: 90vh;
+        max-height: 900px;
+        background: rgba(17, 24, 39, 0.7);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: var(--shadow-glass);
+        border-radius: 40px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
+        color: white;
+      }
+
+      .seller-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--sp-6) var(--sp-8) 0 var(--sp-8);
+      }
+      .seller-layout {
+        padding: var(--sp-6) var(--sp-8);
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        gap: var(--sp-8);
+      }
+      .sidebar {
+        width: 250px;
+        flex-shrink: 0;
+      }
+
+      .menu-group {
+        margin-bottom: var(--sp-6);
+      }
+      .menu-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.5);
+        padding: 0 var(--sp-4);
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+      .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px var(--sp-4);
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 600;
+        border-radius: var(--radius-md);
+        transition: all var(--transition-fast);
+      }
+      .menu-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .menu-item.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .main-content {
+        flex: 1;
+      }
+
+      /* Bulk Action Bar - Glassified */
+      .bulk-action-bar {
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.4),
+          rgba(16, 185, 129, 0.1)
+        );
+        color: white;
+        padding: var(--sp-4) var(--sp-6);
+        border-radius: var(--radius-md);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--sp-6);
+        border: 1px solid rgba(16, 185, 129, 0.5);
+        backdrop-filter: blur(10px);
+      }
+
+      .table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: var(--radius-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th {
+        background: rgba(255, 255, 255, 0.05);
+        padding: var(--sp-3) var(--sp-4);
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.6);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      td {
+        padding: var(--sp-4);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.875rem;
+        vertical-align: middle;
+      }
+
+      .check-cell {
+        width: 40px;
+        text-align: center;
+      }
+      input[type="checkbox"] {
+        transform: scale(1.2);
+        accent-color: var(--color-matcha);
+      }
+
+      .status-pill {
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        font-size: 0.75rem;
+        font-weight: 700;
+        background: rgba(245, 158, 11, 0.2);
+        color: #fcd34d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window-seller">
+      <header class="seller-nav">
+        <div
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+        >
+          <span style="font-size: 1.8rem">📦</span> Kênh Người Bán
+        </div>
+        <div
+          style="
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+          "
+        >
+          S
+        </div>
+      </header>
+
+      <div class="seller-layout">
+        <aside class="sidebar">
+          <div class="menu-group">
+            <div class="menu-title">Tổng quan</div>
+            <a href="seller-dashboard.html" class="menu-item"
+              >📊 Bảng điều khiển</a
+            >
+          </div>
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Sản phẩm</div>
+            <a href="seller-products.html" class="menu-item"
+              >🏷️ Danh sách (\`UC-11\`)</a
+            >
+          </div>
+          <div class="menu-group">
+            <div class="menu-title">Quản lý Đơn hàng</div>
+            <a href="seller-orders.html" class="menu-item active"
+              >📦 Màn hình In Đơn (\`UC-19\`)</a
+            >
+            <a href="#" class="menu-item">🚚 Đang vận chuyển</a>
+          </div>
+        </aside>
+
+        <main class="main-content">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: var(--sp-6);
+            "
+          >
+            <h2 style="color: white">Xử lý Đơn Hàng Hàng Loạt</h2>
+            <div class="font-bold">
+              Hôm nay: <span style="color: #f43f5e">12 đơn chờ</span>
+            </div>
+          </div>
+
+          <div class="bulk-action-bar">
+            <div style="font-size: 1.1rem; font-weight: 700">
+              Đã chọn 2 đơn hàng
+              <span style="font-weight: 400; opacity: 0.8; font-size: 0.9rem"
+                >(sẵn sàng đẩy qua ViettelPost)</span
+              >
+            </div>
+            <div style="display: flex; gap: var(--sp-3)">
+              <button
+                style="
+                  background: rgba(255, 255, 255, 0.2);
+                  color: white;
+                  padding: 8px 16px;
+                  border-radius: var(--radius-sm);
+                  border: 1px solid rgba(255, 255, 255, 0.5);
+                "
+              >
+                Hủy Chọn
+              </button>
+              <button
+                style="
+                  background: white;
+                  color: black;
+                  font-weight: bold;
+                  padding: 8px 16px;
+                  border-radius: var(--radius-sm);
+                "
+                onclick="
+                  alert(
+                    'Đã ném 2 đơn vào BullMQ. Sẽ trả về 1 file PDF gộp 2 mã vạch!',
+                  )
+                "
+              >
+                🖨️ In Mã Vạch
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th class="check-cell"><input type="checkbox" checked /></th>
+                  <th width="20%">Mã Đơn (#ID)</th>
+                  <th width="25%">Sản phẩm</th>
+                  <th width="15%">Thành Tiền</th>
+                  <th width="20%">Bên Vận Chuyển</th>
+                  <th width="15%">Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background: rgba(16, 185, 129, 0.1)">
+                  <td class="check-cell"><input type="checkbox" checked /></td>
+                  <td>
+                    <div class="font-bold">#ORD_9982</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      2 Phút trước
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">Dâu tây Mộc Châu túi 500g...</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      x1 Hộp nhựa
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold" style="color: #f43f5e">150.000₫</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      COD
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">GHTK</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      Quận 1, TP.HCM
+                    </div>
+                  </td>
+                  <td><span class="status-pill">Chờ In Mã</span></td>
+                </tr>
+
+                <tr style="background: rgba(16, 185, 129, 0.1)">
+                  <td class="check-cell"><input type="checkbox" checked /></td>
+                  <td>
+                    <div class="font-bold">#ORD_9983</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      5 Phút trước
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">Bắp cải tím Đà Lạt VietGAP</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      x2 Bắp 1kg
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold" style="color: #f43f5e">70.000₫</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      VNPay
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">ViettelPost</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      Thủ Đức, TP.HCM
+                    </div>
+                  </td>
+                  <td><span class="status-pill">Chờ In Mã</span></td>
+                </tr>
+
+                <tr>
+                  <td class="check-cell"><input type="checkbox" /></td>
+                  <td>
+                    <div class="font-bold">#ORD_9984</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      10 Phút trước
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">Sữa chua vị Dâu tây...</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      x4 Hộp 4 hũ
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold" style="color: #f43f5e">128.000₫</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      COD
+                    </div>
+                  </td>
+                  <td>
+                    <div class="font-bold">GHTK</div>
+                    <div
+                      class="text-xs"
+                      style="color: rgba(255, 255, 255, 0.5)"
+                    >
+                      Bình Thạnh, TP.HCM
+                    </div>
+                  </td>
+                  <td><span class="status-pill">Chờ In Mã</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

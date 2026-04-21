@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thanh toán - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .checkout-layout {
+        grid-template-columns: 2fr 1fr !important;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-bottom: var(--sp-4);
+        padding-bottom: 8px;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.6);
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: var(--sp-3);
+        padding: var(--sp-4);
+        background: var(--card-white-glass-intense);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: var(--radius-md);
+        margin-top: var(--sp-3);
+        cursor: pointer;
+        transition: all var(--transition-fast);
+      }
+
+      .radio-option:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-sm);
+      }
+      .radio-option input[type="radio"] {
+        accent-color: var(--color-matcha);
+        transform: scale(1.2);
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: var(--sp-3);
+        color: var(--color-text-main);
+        font-size: 0.9rem;
+      }
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: var(--sp-4);
+        padding-top: var(--sp-4);
+        border-top: 1px dashed rgba(0, 0, 0, 0.1);
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Minimal Header -->
+      <header class="app-nav">
+        <a
+          href="home.html"
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+          "
+        >
+          <span
+            style="
+              font-size: 1.8rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </a>
+        <span style="font-weight: 600; color: var(--color-text-muted)"
+          >Thanh toán An toàn 🔒</span
+        >
+      </header>
+
+      <main class="app-content checkout-layout">
+        <!-- Left Column: Forms -->
+        <div style="display: flex; flex-direction: column; gap: var(--sp-6)">
+          <!-- Address -->
+          <section class="glass-box">
+            <div class="section-title">📍 Địa chỉ giao hàng</div>
+            <div
+              style="
+                display: flex;
+                gap: var(--sp-4);
+                margin-bottom: var(--sp-4);
+              "
+            >
+              <div style="flex: 1">
+                <label
+                  class="text-xs font-bold"
+                  style="display: block; margin-bottom: 4px"
+                  >Họ và tên</label
+                >
+                <input type="text" class="glass-input" value="Nguyễn Văn A" />
+              </div>
+              <div style="flex: 1">
+                <label
+                  class="text-xs font-bold"
+                  style="display: block; margin-bottom: 4px"
+                  >Số điện thoại</label
+                >
+                <input type="text" class="glass-input" value="0987654321" />
+              </div>
+            </div>
+            <div>
+              <label
+                class="text-xs font-bold"
+                style="display: block; margin-bottom: 4px"
+                >Địa chỉ chi tiết</label
+              >
+              <input
+                type="text"
+                class="glass-input"
+                value="Toà nhà Bitexco, Bến Nghé, Quận 1, TP. Hồ Chí Minh"
+              />
+            </div>
+          </section>
+
+          <!-- Cart Items -->
+          <section class="glass-box">
+            <div class="section-title">📦 Sản phẩm (\`UC-03\`)</div>
+            <div
+              style="display: flex; flex-direction: column; gap: var(--sp-4)"
+            >
+              <!-- Item 1 -->
+              <div
+                style="
+                  display: flex;
+                  gap: var(--sp-4);
+                  align-items: center;
+                  padding: 12px;
+                  background: rgba(255, 255, 255, 0.5);
+                  border-radius: var(--radius-md);
+                "
+              >
+                <div
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    background: rgba(255, 255, 255, 0.8);
+                    border-radius: var(--radius-sm);
+                    font-size: 2rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  🍓
+                </div>
+                <div style="flex: 1">
+                  <h3 class="text-sm">Dâu tây Mộc Châu túi 500g loại 1</h3>
+                  <p class="text-xs text-muted" style="margin-top: 4px">
+                    Phân loại: Hộp Nhựa
+                  </p>
+                </div>
+                <div style="text-align: right">
+                  <div class="font-bold">125.000₫</div>
+                  <div class="text-xs text-muted">SL: 1</div>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div
+                style="
+                  display: flex;
+                  gap: var(--sp-4);
+                  align-items: center;
+                  padding: 12px;
+                  background: rgba(255, 255, 255, 0.5);
+                  border-radius: var(--radius-md);
+                "
+              >
+                <div
+                  style="
+                    width: 60px;
+                    height: 60px;
+                    background: rgba(255, 255, 255, 0.8);
+                    border-radius: var(--radius-sm);
+                    font-size: 2rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  🥬
+                </div>
+                <div style="flex: 1">
+                  <h3 class="text-sm">Bắp cải tím Đà Lạt VietGAP</h3>
+                  <p class="text-xs text-muted" style="margin-top: 4px">
+                    Phân loại: Củ 1kg
+                  </p>
+                </div>
+                <div style="text-align: right">
+                  <div class="font-bold">35.000₫</div>
+                  <div class="text-xs text-muted">SL: 2</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Payment Methods -->
+          <section class="glass-box">
+            <div class="section-title">💳 Phương thức Thanh toán</div>
+            <div
+              style="display: flex; flex-direction: column; gap: var(--sp-2)"
+            >
+              <label class="radio-option">
+                <input type="radio" name="payment" checked />
+                <span style="font-size: 1.8rem">🏦</span>
+                <div>
+                  <div class="font-bold text-sm">Ví VNPay / MoMo</div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">
+                    Chuyển hướng đến cổng thanh toán bảo mật.
+                  </div>
+                </div>
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="payment" />
+                <span style="font-size: 1.8rem">💵</span>
+                <div>
+                  <div class="font-bold text-sm">
+                    Thanh toán khi nhận hàng (COD)
+                  </div>
+                  <div class="text-xs text-muted" style="margin-top: 2px">
+                    Phí thu hộ 0đ
+                  </div>
+                </div>
+              </label>
+            </div>
+          </section>
+        </div>
+
+        <!-- Right Column: Summary -->
+        <div>
+          <div class="glass-box" style="position: sticky; top: 0">
+            <h2 style="margin-bottom: var(--sp-4)">Tổng Đơn</h2>
+
+            <div style="margin-bottom: var(--sp-6)">
+              <input
+                type="text"
+                class="glass-input"
+                placeholder="Mã giảm giá (\`UC-06\`)"
+                style="margin-bottom: 8px"
+              />
+              <button
+                class="btn-glass"
+                style="padding: 8px 16px; font-size: 0.9rem"
+              >
+                Áp dụng
+              </button>
+            </div>
+
+            <div class="summary-row">
+              <span>Tạm tính (3 sản phẩm)</span>
+              <span class="font-bold">195.000₫</span>
+            </div>
+            <div class="summary-row">
+              <span>Phí vận chuyển</span>
+              <span class="font-bold">25.000₫</span>
+            </div>
+            <div
+              class="summary-row"
+              style="color: var(--color-ruby); font-weight: 700"
+            >
+              <span>Voucher giảm giá</span>
+              <span>- 50.000₫</span>
+            </div>
+
+            <div class="summary-total">
+              <span>Tổng cộng</span>
+              <span style="font-size: 1.5rem; color: #f43f5e">170.000₫</span>
+            </div>
+
+            <p
+              class="text-xs text-muted"
+              style="margin-top: 8px; text-align: right"
+            >
+              (Đã bao gồm VAT)
+            </p>
+
+            <button
+              class="btn-glass"
+              style="
+                margin-top: var(--sp-6);
+                background: rgba(16, 185, 129, 0.8);
+                color: white;
+                padding: 16px;
+                font-size: 1.1rem;
+              "
+              onclick="window.location.href = 'payment-processing.html'"
+            >
+              ĐẶT HÀNG NGAY
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

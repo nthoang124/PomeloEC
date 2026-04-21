@@ -1,0 +1,604 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gian Hàng - PomeloEC (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .shop-header {
+        position: relative;
+        width: 100%;
+        height: 280px;
+        background:
+          radial-gradient(
+            circle at 20% 50%,
+            rgba(16, 185, 129, 0.6) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(5, 150, 105, 0.8) 0%,
+            transparent 50%
+          ),
+          #022c22;
+        background-size: 200% 200%;
+        animation: aurora-shift 10s ease infinite;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        overflow: hidden;
+      }
+      @keyframes aurora-shift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .shop-header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none" opacity="0.1"/></svg>')
+          center/cover;
+        mix-blend-mode: overlay;
+      }
+
+      .shop-info-card {
+        background: var(--card-white-glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: var(--radius-lg);
+        padding: var(--sp-6);
+        position: relative;
+        margin-top: -60px;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        gap: var(--sp-6);
+        align-items: center;
+        z-index: 10;
+        justify-content: space-between;
+      }
+
+      .shop-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--card-white-glass);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+      }
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 0 var(--sp-4);
+        border-right: 1px dashed rgba(0, 0, 0, 0.1);
+      }
+      .stat-item:last-child {
+        border-right: none;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: var(--sp-5);
+      }
+
+      .voucher-scroll {
+        display: flex;
+        gap: var(--sp-4);
+        overflow-x: auto;
+        padding-bottom: var(--sp-2);
+        margin: var(--sp-6) 0;
+        scroll-behavior: smooth;
+      }
+      .voucher-scroll::-webkit-scrollbar {
+        height: 4px;
+      }
+      .voucher-scroll::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+      }
+
+      .shop-voucher {
+        min-width: 280px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9),
+          rgba(255, 255, 255, 0.7)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: var(--radius-lg);
+        padding: var(--sp-4);
+        position: relative;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        gap: var(--sp-4);
+        border-left: 6px solid var(--color-matcha);
+      }
+
+      .btn-primary-glass {
+        background: var(--color-matcha);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 8px 24px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .btn-primary-glass:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+      }
+
+      .btn-secondary-glass {
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(5px);
+        color: var(--color-text-main);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 8px 24px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
+      .btn-secondary-glass:hover {
+        background: rgba(255, 255, 255, 0.8);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Header -->
+      <header class="app-nav">
+        <a
+          href="home.html"
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+          "
+        >
+          <span
+            style="
+              font-size: 1.8rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </a>
+
+        <div style="flex: 1; margin: 0 var(--sp-8)">
+          <div class="search-bar">
+            <span>🔍</span>
+            <input
+              type="text"
+              placeholder="Tìm kiếm trong gian hàng Farm Củ Quả Đà Lạt..."
+              style="
+                background: transparent;
+                border: none;
+                width: 100%;
+                outline: none;
+              "
+            />
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <a href="home.html">Home</a>
+          <a href="search.html" class="active">Shop</a>
+          <a href="seasonal.html">Seasonal</a>
+          <a href="recipes.html">Recipes</a>
+          <a href="account.html">Account</a>
+        </nav>
+      </header>
+
+      <main class="app-content" style="padding-top: 0">
+        <!-- Shop Cover -->
+        <div class="shop-header"></div>
+
+        <!-- Shop Info Card -->
+        <div class="shop-info-card">
+          <div style="display: flex; gap: var(--sp-6); align-items: center">
+            <div class="shop-avatar">🥬</div>
+            <div>
+              <h1 style="margin: 0; font-size: 1.8rem">Farm Củ Quả Đà Lạt</h1>
+              <div
+                class="text-muted text-sm"
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  margin-top: 4px;
+                "
+              >
+                <span
+                  class="tag-glass"
+                  style="
+                    background: rgba(16, 185, 129, 0.2);
+                    color: #059669;
+                    padding: 2px 8px;
+                  "
+                  >Mall</span
+                >
+                Hoạt động 5 phút trước
+              </div>
+              <div
+                style="margin-top: var(--sp-4); display: flex; gap: var(--sp-3)"
+              >
+                <button class="btn-primary-glass">+ Theo dõi</button>
+                <button class="btn-secondary-glass">💬 Nhắn tin</button>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex">
+            <div class="stat-item">
+              <span class="text-sm text-muted">Sản phẩm</span>
+              <span
+                class="font-bold"
+                style="color: var(--color-matcha); font-size: 1.2rem"
+                >45</span
+              >
+            </div>
+            <div class="stat-item">
+              <span class="text-sm text-muted">Người theo dõi</span>
+              <span class="font-bold" style="font-size: 1.2rem">12.5k</span>
+            </div>
+            <div class="stat-item">
+              <span class="text-sm text-muted">Đánh giá</span>
+              <span class="font-bold" style="font-size: 1.2rem">4.9 ⭐️</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shop Vouchers Section -->
+        <div>
+          <h3
+            style="
+              margin: var(--sp-6) 0 var(--sp-2) 0;
+              font-size: 1.1rem;
+              color: var(--color-text-main);
+            "
+          >
+            Mã Giảm Giá Của Shop
+          </h3>
+          <div class="voucher-scroll">
+            <div class="shop-voucher">
+              <div style="flex: 1">
+                <div
+                  class="font-bold"
+                  style="color: #f43f5e; font-size: 1.1rem"
+                >
+                  Giảm 25K
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 4px">
+                  Đơn tối thiểu 150k
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 2px">
+                  HSD: 30/04/2026
+                </div>
+              </div>
+              <button
+                class="btn-primary-glass"
+                style="
+                  padding: 6px 12px;
+                  border-radius: var(--radius-sm);
+                  font-size: 0.8rem;
+                  box-shadow: none;
+                "
+              >
+                Lưu mã
+              </button>
+            </div>
+
+            <div class="shop-voucher">
+              <div style="flex: 1">
+                <div
+                  class="font-bold"
+                  style="color: #f43f5e; font-size: 1.1rem"
+                >
+                  Khách mới -10%
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 4px">
+                  Tối đa 50k
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 2px">
+                  HSD: 30/04/2026
+                </div>
+              </div>
+              <button
+                class="btn-primary-glass"
+                style="
+                  padding: 6px 12px;
+                  border-radius: var(--radius-sm);
+                  font-size: 0.8rem;
+                  box-shadow: none;
+                "
+              >
+                Lưu mã
+              </button>
+            </div>
+
+            <div class="shop-voucher">
+              <div style="flex: 1">
+                <div
+                  class="font-bold"
+                  style="color: #f43f5e; font-size: 1.1rem"
+                >
+                  Freeship Extra
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 4px">
+                  Cho mọi đơn hàng
+                </div>
+                <div class="text-xs text-muted" style="margin-top: 2px">
+                  HSD: 30/04/2026
+                </div>
+              </div>
+              <button
+                class="btn-primary-glass"
+                style="
+                  padding: 6px 12px;
+                  border-radius: var(--radius-sm);
+                  font-size: 0.8rem;
+                  box-shadow: none;
+                "
+              >
+                Lưu mã
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shop Tabs -->
+        <div
+          class="glass-box"
+          style="
+            margin-top: var(--sp-6);
+            margin-bottom: var(--sp-6);
+            padding: var(--sp-2) var(--sp-4);
+            display: flex;
+            gap: var(--sp-4);
+            border-radius: var(--radius-full);
+          "
+        >
+          <div
+            style="
+              padding: var(--sp-2) var(--sp-4);
+              background: white;
+              border-radius: var(--radius-full);
+              cursor: pointer;
+              font-weight: 700;
+              box-shadow: var(--shadow-sm);
+            "
+          >
+            Trang chủ Shop
+          </div>
+          <div
+            style="
+              padding: var(--sp-2) var(--sp-4);
+              color: var(--color-text-muted);
+              cursor: pointer;
+            "
+          >
+            Tất cả Sản phẩm
+          </div>
+          <div
+            style="
+              padding: var(--sp-2) var(--sp-4);
+              color: var(--color-text-muted);
+              cursor: pointer;
+            "
+          >
+            Hàng mới về
+          </div>
+          <div
+            style="
+              padding: var(--sp-2) var(--sp-4);
+              color: var(--color-text-muted);
+              cursor: pointer;
+              color: #f43f5e;
+            "
+          >
+            🔥 Khuyến mãi
+          </div>
+        </div>
+
+        <!-- Shop Product Grid -->
+        <div class="product-grid">
+          <!-- Item 1 -->
+          <div class="product-card glass-box">
+            <div
+              style="
+                height: 150px;
+                background: rgba(255, 255, 255, 0.4);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                margin-bottom: var(--sp-3);
+              "
+            >
+              🥬
+            </div>
+            <h3 class="text-sm text-muted" style="margin-bottom: 4px">
+              Farm Củ Quả Đà Lạt
+            </h3>
+            <div class="font-bold" style="line-height: 1.3">
+              Bắp cải tím Đà Lạt VietGAP
+            </div>
+            <div
+              style="
+                margin-top: var(--sp-4);
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+              "
+            >
+              <div class="font-bold" style="color: #f43f5e; font-size: 1.2rem">
+                35.000₫
+              </div>
+              <button
+                style="
+                  width: 35px;
+                  height: 35px;
+                  border-radius: 50%;
+                  background: var(--color-matcha);
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Item 2 -->
+          <div class="product-card glass-box">
+            <div
+              style="
+                height: 150px;
+                background: rgba(255, 255, 255, 0.4);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                margin-bottom: var(--sp-3);
+              "
+            >
+              🍅
+            </div>
+            <h3 class="text-sm text-muted" style="margin-bottom: 4px">
+              Farm Củ Quả Đà Lạt
+            </h3>
+            <div class="font-bold" style="line-height: 1.3">
+              Cà chua Cherry Thủy Canh
+            </div>
+            <div
+              style="
+                margin-top: var(--sp-4);
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+              "
+            >
+              <div>
+                <div
+                  class="text-xs text-muted"
+                  style="text-decoration: line-through"
+                >
+                  60.000₫
+                </div>
+                <div
+                  class="font-bold"
+                  style="color: #f43f5e; font-size: 1.2rem"
+                >
+                  45.000₫
+                </div>
+              </div>
+              <button
+                style="
+                  width: 35px;
+                  height: 35px;
+                  border-radius: 50%;
+                  background: var(--color-matcha);
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <!-- Item 3 -->
+          <div class="product-card glass-box">
+            <div
+              style="
+                height: 150px;
+                background: rgba(255, 255, 255, 0.4);
+                border-radius: var(--radius-md);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 3rem;
+                margin-bottom: var(--sp-3);
+              "
+            >
+              🥦
+            </div>
+            <h3 class="text-sm text-muted" style="margin-bottom: 4px">
+              Farm Củ Quả Đà Lạt
+            </h3>
+            <div class="font-bold" style="line-height: 1.3">
+              Bông Cải Xanh Hữu Cơ
+            </div>
+            <div
+              style="
+                margin-top: var(--sp-4);
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-end;
+              "
+            >
+              <div class="font-bold" style="color: #f43f5e; font-size: 1.2rem">
+                40.000₫
+              </div>
+              <button
+                style="
+                  width: 35px;
+                  height: 35px;
+                  border-radius: 50%;
+                  background: var(--color-matcha);
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                "
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

@@ -30,8 +30,8 @@ Tài liệu này ánh xạ 100% các **Use Cases** (UC) vào 7 **Modules** cốt
 | Mã UC | Tên Tính năng | Ưu Tiên | Chuẩn đầu ra (DoD) |
 | :--- | :--- | :--- | :--- |
 | **UC-11** | Quản trị Biến thể Sản phẩm (Matrix) | Cao (P0) | Logic thuật toán sinh Ma trận màu/size, check duplicate SKU. |
-| **UC-01** | Tìm kiếm & Lọc Tốc độ cao | Cao (P0) | Auto-sync data lên Elasticsearch, viết High-performance Query DSL. |
-| **UC-10** | Đánh giá Sản phẩm (Reviews) | Vừa (P2) | Logic Verify Order. Upload Video S3. Worker update Avg Rating. |
+| **UC-01** | Tìm & Xem Chi tiết SP | Cao (P0) | Auto-sync data lên Elasticsearch, viết High-performance Query DSL. |
+| **UC-10** | Đánh giá Sản phẩm (Text/Video) | Vừa (P2) | Logic Verify Order. Text xuống CSDL. Upload Video S3. Worker update Avg Rating. |
 | **UC-17** | Gợi ý Cá nhân hóa (Recommend Feed) | Thấp (P3) | Bóc tách Clickstream, truy vấn Function Score trên ElasticSearch. |
 
 ## M3. Inventory Module (Kho Hàng Core)
@@ -40,7 +40,7 @@ Tài liệu này ánh xạ 100% các **Use Cases** (UC) vào 7 **Modules** cốt
 | Mã UC | Tên Tính năng | Ưu Tiên | Chuẩn đầu ra (DoD) |
 | :--- | :--- | :--- | :--- |
 | **UC-04** | Nhập/Xuất Tồn Kho (Ledger) | Cao (P0) | Ghi nhận thẻ kho, đối soát lệch kho, đồng bộ Total Stock lên Redis. |
-| **UC-03_L**| **Lock Tồn Kho FlashSale** | **Tối Cao (P0)**| **Lua Script trên Redis**. Đảm bảo trừ kho <2ms, Lock tạm trong 15 phút. |
+| **UC-03_L**| **Lock Tồn Kho** | **Tối Cao (P0)**| **Lua Script trên Redis**. Đảm bảo trừ kho <2ms, Lock tạm trong 15 phút. |
 
 ## M4. Cart & Checkout Module (Giỏ hàng & Khuyến mãi)
 **Trách nhiệm:** Lưu tạm giỏ hàng, tính giá (Rule Engine) chống thất thoát.
@@ -57,7 +57,7 @@ Tài liệu này ánh xạ 100% các **Use Cases** (UC) vào 7 **Modules** cốt
 
 | Mã UC | Tên Tính năng | Ưu Tiên | Chuẩn đầu ra (DoD) |
 | :--- | :--- | :--- | :--- |
-| **UC-03_W**| **Chốt Đơn (DB Write)** | **Tối Cao (P0)**| Mở Transaction Postgre. Tách Đơn đa Shop (Sub-order). Bắn Kafka Event. |
+| **UC-03_W**| **Chốt Đơn (Mua Hàng)** | **Tối Cao (P0)**| Mở Transaction Postgre. Tách Đơn đa Shop (Sub-order). Bắn Kafka Event. |
 | **UC-12** | Single Fulfillment | Cao (P1) | Gọi API tạo bill ViettelPost. Lấy mã Barcode trả về App. |
 | **UC-19** | Bulk Fulfillment (In Hàng Loạt) | Vừa (P2) | Gom 500 orders qua Queue. Nối PDF thành 1 cụm đầy đủ mã Vạch. |
 | **UC-08** | Order Tracking State | Cao (P1) | Nhận Webhook trạng thái gói hàng và chuyển đổi State Machine. |

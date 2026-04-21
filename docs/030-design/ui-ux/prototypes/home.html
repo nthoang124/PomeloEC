@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PomeloEC - Tươi ngon mỗi ngày (Aurora Layout)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Inline specific adjustments */
+      body {
+        padding: 5vh 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Header -->
+      <header class="app-nav">
+        <div
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+          "
+        >
+          <span
+            style="
+              font-size: 1.8rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </div>
+
+        <nav class="nav-links">
+          <a href="home.html" class="active">Home</a>
+          <a href="search.html">Shop</a>
+          <a href="seasonal.html">Seasonal</a>
+          <a href="recipes.html">Recipes</a>
+          <a href="account.html">Account</a>
+        </nav>
+      </header>
+
+      <!-- Main Content Area (70 Left / 30 Right) -->
+      <main class="app-content">
+        <!-- Left Column: Product Grid -->
+        <section
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--sp-5);
+          "
+        >
+          <!-- Pink Card (Grapefruit) -->
+          <a href="pdp.html" class="aurora-card pink">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <!-- Placeholder for Grapefruit image -->
+              <div style="font-size: 4rem">🍊</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Sweet Grapefruits</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$4.99<span style="font-size: 0.8rem; font-weight: normal"
+                    >/lb</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 4.5</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-pink-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+
+          <!-- Pink Card (Grapefruit) -->
+          <a href="pdp.html" class="aurora-card pink">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <div style="font-size: 4rem">🍊</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Sweet Grapefruits</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$4.99<span style="font-size: 0.8rem; font-weight: normal"
+                    >/lb</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 4.5</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-pink-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+
+          <!-- Green Card (Apples) -->
+          <a href="pdp.html" class="aurora-card green">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <div style="font-size: 4rem">🍏</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Matcha Green Apples</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$3.25<span style="font-size: 0.8rem; font-weight: normal"
+                    >/lb</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 4.5</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-green-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+
+          <!-- Green Card (Spinach) -->
+          <a href="pdp.html" class="aurora-card green">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <div style="font-size: 4rem">🥬</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Farm Fresh Spinach</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$5.50<span style="font-size: 0.8rem; font-weight: normal"
+                    >/bunch</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 4.5+</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-green-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+
+          <!-- Green Card (Spinach 2) -->
+          <a href="pdp.html" class="aurora-card green">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <div style="font-size: 4rem">🥑</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Farm Fresh Avocado</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$5.50<span style="font-size: 0.8rem; font-weight: normal"
+                    >/bunch</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 4.5+</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-green-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+
+          <!-- Pink Card (Tomatoes) -->
+          <a href="pdp.html" class="aurora-card pink">
+            <div class="card-img-wrapper">
+              <span
+                style="
+                  position: absolute;
+                  top: 10px;
+                  right: 10px;
+                  font-size: 1.2rem;
+                  color: rgba(0, 0, 0, 0.3);
+                "
+                >♡</span
+              >
+              <div style="font-size: 4rem">🍅</div>
+            </div>
+            <div>
+              <div class="text-xs text-muted" style="font-weight: 600">
+                Organic
+              </div>
+              <h3 style="margin-bottom: 8px">Ripe Tomatoes</h3>
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 12px;
+                "
+              >
+                <span class="font-bold" style="font-size: 1.1rem"
+                  >$6.00<span style="font-size: 0.8rem; font-weight: normal"
+                    >/kg</span
+                  ></span
+                >
+                <span class="text-xs font-bold" style="color: #f59e0b"
+                  >⭐ 6.0+</span
+                >
+              </div>
+              <button
+                class="btn-glass"
+                style="background: var(--card-pink-btn)"
+              >
+                Add to Cart
+              </button>
+            </div>
+          </a>
+        </section>
+
+        <!-- Right Column: Sidebar -->
+        <aside>
+          <!-- Search -->
+          <div style="margin-bottom: var(--sp-6)">
+            <h3 style="margin-bottom: 8px">Search</h3>
+            <input
+              type="text"
+              class="glass-input"
+              placeholder="Search fresh produce..."
+            />
+          </div>
+
+          <!-- Categories -->
+          <div class="glass-box" style="margin-bottom: var(--sp-6)">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <h3 style="margin-bottom: 0">Categories</h3>
+              <span style="cursor: pointer">⚙️</span>
+            </div>
+            <div class="category-pills">
+              <div class="cat-pill"><span class="icon">🍎</span>Fruit</div>
+              <div class="cat-pill" style="background: white">
+                <span class="icon">🥬</span>Veg
+              </div>
+              <div class="cat-pill"><span class="icon">🌿</span>Herbs</div>
+            </div>
+          </div>
+
+          <!-- Featured Today -->
+          <div class="glass-box">
+            <h3 style="margin-bottom: var(--sp-4)">Featured Today</h3>
+
+            <div class="linear-card">
+              <div
+                class="img-box"
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 2rem;
+                "
+              >
+                🥑
+              </div>
+              <div style="flex: 1">
+                <div class="font-bold">Fresh Avocado</div>
+                <div
+                  class="text-xs font-bold"
+                  style="color: #f59e0b; margin-top: 4px"
+                >
+                  ⭐ 4.0/b
+                </div>
+              </div>
+            </div>
+
+            <div class="linear-card">
+              <div
+                class="img-box"
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 2rem;
+                "
+              >
+                🍯
+              </div>
+              <div style="flex: 1">
+                <div class="font-bold">Local Honey</div>
+                <div
+                  class="text-xs font-bold"
+                  style="color: #f59e0b; margin-top: 4px"
+                >
+                  ⭐ 5.9/lb
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <!-- Floating Cart Badge -->
+      <div
+        class="floating-cart"
+        onclick="window.location.href = 'cart.html'"
+        style="cursor: pointer"
+      >
+        <span style="font-size: 1.5rem">🛒</span>
+        <div>
+          <div style="line-height: 1">Cart</div>
+          <div class="text-xs text-muted" style="font-weight: normal">
+            2 items
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

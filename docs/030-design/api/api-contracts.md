@@ -64,7 +64,7 @@ Dựa trên 22 Use Cases cốt lõi, danh sách API được phân mảnh theo D
 | `POST` | `/api/v1/orders/shipping-fee` | UC-02 | Ước tính phí vận chuyển từ địa chỉ Buyer. | Bearer |
 | `POST` | `/api/v1/orders/checkout` | UC-03/06 | Gọi Redis Lua Script trừ tồn kho, tính Voucher, sinh URL VNPay. Đòi hỏi `Idempotency-Key` nghiêm ngặt theo HLD. | Bearer |
 | `POST` | `/api/v1/orders/{id}/refund` | UC-09 | Mở phiên RMA (Hoàn tiền rủi ro) khi phát sinh sự cố. Lock tiền quỹ Seller. | Bearer |
-| `POST` | `/api/v1/products/{id}/reviews` | UC-10 | Post Video/Hình đánh giá sau khi đã tải lên S3 bằng Presigned URL. | Bearer |
+| `POST` | `/api/v1/products/{id}/reviews` | UC-10 | Gửi đánh giá (Text, Rating). Đính kèm Video/Hình ảnh lên S3 bằng Presigned URL. | Bearer |
 | `GET` | `/api/v1/feed` | UC-17 | Recommendation Query. Load sản phẩm theo Lịch sử Click/Mua của User. | Bearer |
 | `WS` | `/api/v1/chat` | UC-15 | Channel kết nối Socket.io 2 chiều Buyer - Seller. | Bearer |
 

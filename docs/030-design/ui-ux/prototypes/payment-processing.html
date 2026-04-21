@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đang xử lý thanh toán... - PomeloEC</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Auto redirect after 2.5 seconds -->
+    <meta http-equiv="refresh" content="2.5;url=payment-success.html" />
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid rgba(16, 185, 129, 0.2);
+        border-top: 6px solid #10b981;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto var(--sp-6) auto;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .auth-container {
+        width: 100%;
+        max-width: 500px;
+        padding: var(--sp-8);
+        z-index: 10;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="auth-container">
+      <div class="glass-box" style="padding: var(--sp-8)">
+        <div class="spinner"></div>
+        <h2 style="margin-bottom: var(--sp-2)">Đang xử lý giao dịch</h2>
+        <p class="text-muted" style="font-weight: 600; line-height: 1.6">
+          Vui lòng không đóng trình duyệt hoặc quay lại.<br />Hệ thống đang kết
+          nối an toàn tới Cổng thanh toán VNPay...
+        </p>
+
+        <div
+          style="
+            margin-top: var(--sp-6);
+            background: rgba(0, 0, 0, 0.05);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            display: inline-block;
+          "
+        >
+          <div class="text-sm">Tổng tiền thanh toán</div>
+          <div class="font-bold" style="font-size: 1.5rem; color: #f43f5e">
+            170.000₫
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

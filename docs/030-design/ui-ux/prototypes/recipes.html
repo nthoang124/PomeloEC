@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Công thức Căn Bếp - PomeloEC</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        padding: 5vh 0;
+      }
+
+      .recipes-layout {
+        grid-template-columns: 1fr 350px !important;
+      }
+
+      .recipe-card {
+        background: var(--card-white-glass);
+        backdrop-filter: blur(20px);
+        border-radius: var(--radius-xl);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        margin-bottom: var(--sp-6);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .recipe-img {
+        height: 250px;
+        background: rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        position: relative;
+      }
+      .recipe-time-badge {
+        position: absolute;
+        bottom: 16px;
+        right: 16px;
+        padding: 6px 12px;
+        background: rgba(0, 0, 0, 0.6);
+        color: white;
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: bold;
+        backdrop-filter: blur(5px);
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .recipe-body {
+        padding: var(--sp-6);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      /* Buy Ingredients Widget */
+      .ingredients-widget {
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: var(--radius-md);
+        padding: var(--sp-4);
+        margin-top: var(--sp-4);
+        border: 1px dashed rgba(255, 255, 255, 0.8);
+      }
+      .i-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-size: 0.9rem;
+      }
+      .i-row:last-child {
+        border-bottom: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-window">
+      <!-- Header -->
+      <header class="app-nav">
+        <a
+          href="home.html"
+          style="
+            font-weight: 800;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #374151;
+          "
+        >
+          <span
+            style="
+              font-size: 1.8rem;
+              filter: hue-rotate(120deg) brightness(1.2);
+            "
+            >🍉</span
+          >
+          PomeloEC
+        </a>
+
+        <nav class="nav-links">
+          <a href="home.html">Home</a>
+          <a href="search.html">Shop</a>
+          <a href="seasonal.html">Seasonal</a>
+          <a href="recipes.html" class="active">Recipes</a>
+          <a href="account.html">Account</a>
+        </nav>
+      </header>
+
+      <main class="app-content recipes-layout">
+        <!-- Left Column: Feed -->
+        <div style="display: flex; flex-direction: column; gap: var(--sp-4)">
+          <h2 style="margin-bottom: var(--sp-4)">
+            Món ngon mỗi ngày (Shoppertainment)
+          </h2>
+
+          <!-- Post 1 -->
+          <article class="recipe-card">
+            <div class="recipe-img">
+              🥗
+              <div class="recipe-time-badge">⏱️ 15 Phút • Dễ</div>
+            </div>
+            <div class="recipe-body">
+              <h3 style="font-size: 1.5rem; margin-bottom: 8px">
+                Salad Dâu Tây & Bơ Sáp Dầu Giấm
+              </h3>
+              <p
+                class="text-muted"
+                style="line-height: 1.6; margin-bottom: var(--sp-4)"
+              >
+                Một bữa ăn nhẹ hoàn hảo cho ngày hè oi bức. Vị chua ngọt của dâu
+                tây Mộc Châu hoà quyện tuyệt đối với độ béo ngậy của Bơ sáp Tây
+                Nguyên.
+              </p>
+
+              <div class="ingredients-widget">
+                <div style="font-weight: 700; margin-bottom: 8px">
+                  Mua Nhanh Nguyên Liệu (\`UC-16\`)
+                </div>
+                <div class="i-row">
+                  <div style="display: flex; gap: 8px; align-items: center">
+                    🍓 <span>Dâu tây Mộc Châu (200g)</span>
+                  </div>
+                  <div class="font-bold">50.000₫</div>
+                </div>
+                <div class="i-row">
+                  <div style="display: flex; gap: 8px; align-items: center">
+                    🥑 <span>Bơ Sáp Tây Nguyên (1 Quả)</span>
+                  </div>
+                  <div class="font-bold">15.000₫</div>
+                </div>
+                <div class="i-row">
+                  <div style="display: flex; gap: 8px; align-items: center">
+                    🥬 <span>Xà lách Lolo xanh (Trọng lượng chọn sau)</span>
+                  </div>
+                  <div class="font-bold text-muted" style="font-size: 0.8rem">
+                    Từ 10k
+                  </div>
+                </div>
+                <button
+                  class="btn-glass"
+                  style="
+                    margin-top: 12px;
+                    background: rgba(16, 185, 129, 0.8);
+                    color: white;
+                  "
+                >
+                  + Thêm Cả 3 Vào Giỏ (65.000₫+)
+                </button>
+              </div>
+
+              <a
+                href="#"
+                style="
+                  margin-top: var(--sp-4);
+                  text-align: center;
+                  color: var(--color-matcha);
+                  font-weight: bold;
+                  text-decoration: underline;
+                "
+                >Đọc chi tiết các bước nấu →</a
+              >
+            </div>
+          </article>
+        </div>
+
+        <!-- Right Column: Sidebar -->
+        <aside>
+          <div class="glass-box" style="margin-bottom: var(--sp-6)">
+            <h3 style="margin-bottom: var(--sp-4)">Công Cụ Nhà Bếp</h3>
+            <div class="category-pills" style="display: flex; flex-wrap: wrap">
+              <div class="cat-pill" style="background: white">
+                Chế độ Ăn Kiêng
+              </div>
+              <div class="cat-pill">Món Chay</div>
+              <div class="cat-pill">Dưới 30 Phút</div>
+              <div class="cat-pill">Cho Bé Ăn Dặm</div>
+            </div>
+          </div>
+
+          <div class="glass-box">
+            <h3 style="margin-bottom: var(--sp-4)">Trending Tuần Này</h3>
+            <div style="display: flex; gap: 12px; margin-bottom: 12px">
+              <div
+                style="
+                  font-size: 2rem;
+                  background: rgba(255, 255, 255, 0.5);
+                  padding: 8px;
+                  border-radius: 8px;
+                "
+              >
+                🍲
+              </div>
+              <div>
+                <div class="font-bold" style="font-size: 0.9rem">
+                  Canh củ quả hầm xuơng ngọt lịm
+                </div>
+                <div class="text-xs text-muted">2.4k lượt nấu</div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px">
+              <div
+                style="
+                  font-size: 2rem;
+                  background: rgba(255, 255, 255, 0.5);
+                  padding: 8px;
+                  border-radius: 8px;
+                "
+              >
+                🧃
+              </div>
+              <div>
+                <div class="font-bold" style="font-size: 0.9rem">
+                  Nước ép Táo Cần Tây thanh lọc cơ thể
+                </div>
+                <div class="text-xs text-muted">1.8k lượt nấu</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </body>
+</html>
