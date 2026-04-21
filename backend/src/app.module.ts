@@ -8,6 +8,7 @@ import { PaymentModule } from './payment/payment.module';
 import { CommunicationModule } from './communication/communication.module';
 import { BackgroundJobsModule } from './background-jobs/background-jobs.module';
 import { IamModule } from './iam/iam.module';
+import { CatalogModule } from './catalog/catalog.module';
 
 @Module({
   imports: [
@@ -48,6 +49,8 @@ import { IamModule } from './iam/iam.module';
     BackgroundJobsModule,
 
     IamModule,
+
+    CatalogModule,
 
     // Add Domain Modules here...
   ],
