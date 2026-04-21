@@ -10,7 +10,6 @@ model User {
   id            String    @id @default(uuid()) @db.Uuid
   email         String    @unique @db.VarChar(255)
   phone         String?   @unique @db.VarChar(20)
-  password_hash String?   @db.VarChar(255)
   role          UserRole  @default(BUYER)
   loyalty_coins Int       @default(0)
   created_at    DateTime  @default(now())

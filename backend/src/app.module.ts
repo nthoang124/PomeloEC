@@ -7,6 +7,7 @@ import { CheckoutModule } from './checkout/checkout.module';
 import { PaymentModule } from './payment/payment.module';
 import { CommunicationModule } from './communication/communication.module';
 import { BackgroundJobsModule } from './background-jobs/background-jobs.module';
+import { IamModule } from './iam/iam.module';
 
 @Module({
   imports: [
@@ -45,6 +46,8 @@ import { BackgroundJobsModule } from './background-jobs/background-jobs.module';
     CommunicationModule,
 
     BackgroundJobsModule,
+
+    IamModule,
 
     // Add Domain Modules here...
   ],
