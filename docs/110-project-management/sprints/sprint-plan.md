@@ -24,7 +24,7 @@ Giai đoạn này tập trung hoàn thiện toàn bộ tính năng **P0**. Tiêu
 
 ### Sprint 1: Nền tảng Định danh & Danh mục (Foundation & Catalog)
 **Mục tiêu (Goal):** Người dùng có thể Đăng ký tài khoản, và Admin có quyền định nghĩa chuẩn xác Ma trận Sản phẩm đa biến thể (Size/Độ tuổi/Màu) phức tạp.
-- **UC-00A (P0):** Xây dựng Authentication (JWT + Refresh Token Cookie), SSO Google cho Khách hàng.
+- **UC-00A (P0):** Tích hợp Keycloak IAM OIDC (SSO Google, Phân quyền Role). Setup Next-Auth và NestJS Keycloak Guard.
 - **UC-11 (P0):** Thiết lập Data Model cho Danh mục & Sản phẩm, Validate logic chống trùng lặp SKU Variant.
 
 ### Sprint 2: Siêu Tốc Độ Tìm Kiếm & Tồn Kho Cơ Sở

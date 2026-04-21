@@ -18,17 +18,14 @@ Tài liệu này tuân thủ nguyên lý **Deep Task Decomposition**. 22 Use Cas
 ## 🏃 SPRINT 1: Nền tảng Định danh & Danh mục (Foundation & Catalog)
 
 ### Epic: Quản Lý Khách Hàng (UC-00A)
-*Lát cắt 1.1: Luồng Đăng ký/Đăng nhập Nội bộ*
-- `[TASK-1.1.1-DB]`: Viết Prisma Schema bảng `User`, `Role`, `Session`. Thiết lập Index email. Chạy Migration.
-- `[TASK-1.1.2-BE]`: Dựng Module `IAM`. Viết logic băm mật khẩu `Bcrypt`. Code API `/auth/register` (Tạo User) & `/auth/login` (Xác thực).
-- `[TASK-1.1.3-BE]`: Cấu hình JwtService. Viết AccessToken AuthGuard và cơ chế Refresh Token lưu bằng Cookie httpOnly.
-- `[TASK-1.1.4-FE]`: Dựng màn hình `/login` và `/register` bằng `shadcn-ui`. Validate Form bằng `zod` và `react-hook-form`.
-- `[TASK-1.1.5-FE]`: Cấu hình `Zustand` Auth Store chứa state phiên đăng nhập. Xử lý kịch bản lỗi (Sai pass, Email trùng).
+*Lát cắt 1.1: Trụ sở Nhận diện (Keycloak IAM)*
+- `[TASK-1.1.1-DB]`: Thiết lập cấu hình Keycloak. Tạo Realm `PomeloEC` và Clients cho Frontend, Backend.
+- `[TASK-1.1.2-BE]`: Dựng Module `IAM` bằng `nest-keycloak-connect`. Setup KeycloakGuard để Verify JWT, phân quyền Admin/Seller/Buyer theo Role của Keycloak.
+- `[TASK-1.1.3-BE]`: Đồng bộ User Profile (Webhook hoặc Kafka từ Keycloak) vào Supabase Postgres lưu thông tin Profile `public.Users`.
+- `[TASK-1.1.4-FE]`: Tích hợp thư viện `next-auth` (KeycloakProvider). Xử lý luồng Redirect Login ra màn hình Keycloak, lấy Token về Cookie mượt mà.
 
-*Lát cắt 1.2: Cổng Đăng nhập một chạm (SSO Google)*
-- `[TASK-1.2.1-DB]`: Sinh bảng `OAuthAccount` nối 1-n với bảng User (Tách riêng để bảo mật).
-- `[TASK-1.2.2-BE]`: Viết GoogleStrategy (NestJS Passport OAuth2) hứng callback. Trả về Token.
-- `[TASK-1.2.3-FE]`: Tích hợp Nút bấm Google Login chuyển hướng authorize.
+*Lát cắt 1.2: Quản lý SSO (No-code)*
+- `[TASK-1.2.1-IAM]`: Cấu hình SSO Google/Facebook trực tiếp trên Keycloak Admin Console (Không cần code backend).
 
 ### Epic: Danh mục & Sinh Điểm Bán Hàng (UC-11)
 *Lát cắt 1.3: Khởi tạo dữ liệu Product Core*
@@ -42,9 +39,9 @@ Tài liệu này tuân thủ nguyên lý **Deep Task Decomposition**. 22 Use Cas
 ## 🏃 SPRINT 2: Siêu Tốc Độ Tìm Kiếm & Tồn Kho Cơ Sở
 
 ### Epic: Tìm kiếm Elasticsearch (UC-01)
-*Lát cắt 2.1: Bộ đồng bộ hóa (Sink Connector)*
-- `[TASK-2.1.1-BE]`: Cấu hình Kết nối NestJS với Cluster Elasticsearch.
-- `[TASK-2.1.2-BE]`: Gài hook vào BaseRepository: Bất cứ lệnh Save/Update Product nào cũng bắn Event đẩy qua Kafka -> Worker nhồi chỉ mục lên Elastic.
+*Lát cắt 2.1: Bộ đồng bộ hóa CDC (Cầu nối Data)*
+- `[TASK-2.1.1-DB]`: Cấu hình Debezium cắm vào Supabase Postgres bắt sự kiện biến động dữ liệu bảng `Product`. Đẩy sự kiện qua Kafka Topic tên `dbserver.public.Product`.
+- `[TASK-2.1.2-BE]`: Cấu hình Kafka Connect Sink tự động kéo Msg từ Kafka nhồi chỉ mục lên ElasticSearch mà không tốn 1 dòng code cập nhật ở Backend.
 *Lát cắt 2.2: Luồng Trải nghiệm Người dùng (UX)*
 - `[TASK-2.2.1-BE]`: Xây dựng Endpoint `/search?q=...` với Elastic Query DSL cho thanh tìm kiếm thông minh phân tích vỡ chữ (Fuzzy & Edge N-gram).
 - `[TASK-2.2.2-FE]`: Phân trang Vô cực (Infinite Scroll) ở Homepage hoặc Search Result cho luồng Catalog.
@@ -130,15 +127,15 @@ Tài liệu này tuân thủ nguyên lý **Deep Task Decomposition**. 22 Use Cas
 ### Epic: Tranh cháp & Hoàn Trả (UC-09, UC-14, UC-10)
 - `[TASK-6.3.1-BE]`: Tích hợp API Cổng Thanh toán 1-Click Reverse Refund. State Machine chuyển sang `DISPUTED`. Đóng băng Wallet Escrow.
 - `[TASK-6.3.2-BE]`: Cronjob: Tự động chạy hàng ngày dò qua mốc 3 ngày mà KHÔNG phàn nàn -> Tự chuyển từ `DELIVERED` -> `COMPLETED`.
-- `[TASK-6.3.3-FE]`: Upload đánh giá & Video vào Object Storage (S3/Supabase). Lấy link S3 hiển thị Gallery FE.
+- `[TASK-6.3.3-FE]`: Upload đánh giá & Video vào Object Storage (Supabase Storage). Lấy link Supabase CDN hiển thị Gallery FE.
 
 ---
 
 ## 🏃 SPRINT 7: Tối Ưu Bằng Máy Cuối (Long tail)
 
-### Epic: Cỗ Máy Recommend & Data Load (UC-17, UC-21)
-- `[TASK-7.1.1-BE]`: Thuật toán Elastic: `function_score` query đẩy các sản phẩm "Bán Chạy" (Số lượng Mua cao) + "Review Ngon" lên trước.
-- `[TASK-7.1.2-BE]`: Xử lý I/O Stream Nodejs: Import file CSV Đối soát cước phí nặng 100MB mà không làm sập bộ nhớ RAM (Dành cho việc dọn nợ Cước Tự động với GHTK).
+### Epic: Siêu Trí Tuệ Phân Tích OLAP & Dashboard (UX-17)
+- `[TASK-7.1.1-DB]`: Cấu hình ClickHouse Kafka Engine (Bảng Materialized View) trực tiếp nuốt trọn Dữ liệu Giao dịch từ Kafka topic do Debezium nhả ra.
+- `[TASK-7.1.2-BE]`: Xây dựng module `AnalyticsService` chạy câu truy vấn SQL siêu tốc trên ClickHouse để sinh báo cáo Doanh Thu, Tồn kho realtime trả về biểu đồ Dashboard.
 
 ### Epic: Chăm sóc KH và Anti-Fraud (UC-15, UC-22, UC-19)
 - `[TASK-7.2.1-BE]`: Init NestJS WebSocket (Socket.io Gateway). Lưu luồng tin nhắn Chat KH-Seller trong MongoDB (hoặc Postgres partition riêng).
