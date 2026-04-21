@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "pnpm --filter backend start",
-    "dev": "pnpm --filter backend start:dev",
-    "build": "pnpm --filter backend build",
-    "test": "pnpm --filter backend test"
+    "dev:back": "pnpm --filter backend start:dev",
+    "dev:front": "pnpm --filter frontend dev",
+    "build:back": "pnpm --filter backend build",
+    "build:front": "pnpm --filter frontend build",
+    "test:back": "pnpm --filter backend test",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0"
   }
 }

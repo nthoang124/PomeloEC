@@ -31,3 +31,20 @@ npm-debug.log*
 .ag/
 .cursorrules
 .clinerules
+
+# Test & Coverage
+coverage/
+.nyc_output/
+
+# Cache & Metadata
+.eslintcache
+.stylelintcache
+*.tsbuildinfo
+.turbo/
+.vercel/
+
+# Temporary
+tmp/
+temp/
+.DS_Store
+Thumbs.db
