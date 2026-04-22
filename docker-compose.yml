@@ -1,21 +1,5 @@
 version: "3.8"
 services:
-  # 1. Cơ sở dữ liệu chính (Postgres) - Giả lập cho Supabase Local.
-  postgres:
-    image: postgres:15-alpine
-    container_name: pomeloec_postgres
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: pomeloec
-    # Bắt buộc bật WAL level logical để Debezium có thể bám vào đọc Log (CDC)
-    command: ["postgres", "-c", "wal_level=logical", "-c", "max_replication_slots=4", "-c", "max_wal_senders=4"]
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: always
-
   # 2. Redis - In-Memory Cache & Queue
   redis:
     image: redis:7-alpine
@@ -29,20 +13,24 @@ services:
 
   # 3. Message Broker (Kafka chuẩn KRaft mới, không cần Zookeeper)
   kafka:
-    image: bitnami/kafka:latest
+    image: apache/kafka:3.7.0
     container_name: pomeloec_kafka
+    user: "root"
     ports:
       - "9092:9092"
     environment:
-      - KAFKA_CFG_NODE_ID=0
-      - KAFKA_CFG_PROCESS_ROLES=controller,broker
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     volumes:
-      - kafka_data:/bitnami/kafka
+      - kafka_data:/tmp/kafka-logs
     restart: always
 
   # 4. Identity & Access Management (SSO OIDC Server)
@@ -55,8 +43,6 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
     command: start-dev
-    depends_on:
-      - postgres
     restart: always
 
   # 5. Change Data Capture (CDC Connector)
@@ -73,7 +59,6 @@ services:
       - STATUS_STORAGE_TOPIC=my_connect_statuses
     depends_on:
       - kafka
-      - postgres
     restart: always
 
   # 6. Analytics Database (OLAP)
@@ -106,7 +91,6 @@ services:
     restart: always
 
 volumes:
-  postgres_data:
   redis_data:
   kafka_data:
   clickhouse_data:

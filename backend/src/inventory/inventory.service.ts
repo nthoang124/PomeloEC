@@ -10,18 +10,22 @@ export class InventoryService {
     private readonly redis: RedisService,
   ) {}
 
-  async importGoods(dto: CreateImportDto, storeId: string) {
+  async importGoods(dto: CreateImportDto, userId: string) {
     // 1. Kiểm tra biến thể có hợp lệ và thuộc về Store này không
     const variant = await this.prisma.variant.findUnique({
       where: { id: dto.variantId },
-      include: { product: true },
+      include: {
+        product: {
+          include: { store: true },
+        },
+      },
     });
 
     if (!variant) {
       throw new BadRequestException('Không tìm thấy biến thể hàng hóa SKU');
     }
 
-    if (variant.product.store_id !== storeId) {
+    if (variant.product.store.owner_id !== userId) {
       throw new BadRequestException(
         'Quyền truy cập bị từ chối. Sản phẩm không thuộc Cửa hàng của bạn.',
       );

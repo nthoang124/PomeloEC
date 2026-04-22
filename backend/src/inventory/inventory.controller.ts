@@ -19,7 +19,7 @@ export class InventoryController {
     @Req() req: Request & { user?: { sub: string } },
   ) {
     // req.user được Inject từ Keycloak JWT parsing qua middleware
-    const storeId = req.user?.sub ?? '';
-    return this.inventoryService.importGoods(createImportDto, storeId);
+    const userId = req.user?.sub ?? '';
+    return this.inventoryService.importGoods(createImportDto, userId);
   }
 }
