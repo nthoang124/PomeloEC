@@ -16,6 +16,12 @@ import { SearchModule } from './search/search.module';
 import { ConfigModule } from '@nestjs/config';
 import { StoreModule } from './store/store.module';
 import { ShippingModule } from './shipping/shipping.module';
+import { LoyaltyModule } from './loyalty/loyalty.module';
+import { FlashSaleModule } from './flash-sale/flash-sale.module';
+import { ChatModule } from './chat/chat.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { FulfillmentModule } from './fulfillment/fulfillment.module';
+import { OrdersModule } from './orders/orders.module';
 
 @Module({
   imports: [
@@ -37,11 +43,11 @@ import { ShippingModule } from './shipping/shipping.module';
       },
     }),
 
-    // Rate Limiting (DDoS prevention) - Max 100 requests per minute by default
+    // Rate Limiting (DDoS prevention) - Max 5 requests per second
     ThrottlerModule.forRoot([
       {
-        ttl: 60000,
-        limit: 100,
+        ttl: 1000,
+        limit: 5,
       },
     ]),
 
@@ -71,6 +77,18 @@ import { ShippingModule } from './shipping/shipping.module';
     StoreModule,
 
     ShippingModule,
+
+    LoyaltyModule,
+
+    FlashSaleModule,
+
+    ChatModule,
+
+    AnalyticsModule,
+
+    FulfillmentModule,
+
+    OrdersModule,
 
     // Add Domain Modules here...
   ],

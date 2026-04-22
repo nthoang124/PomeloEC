@@ -7,6 +7,7 @@ import {
 import { PrismaService } from '../shared/prisma/prisma.service';
 import { RedisService } from '../shared/redis/redis.service';
 import { PaymentService } from '../payment/payment.service';
+import { LoyaltyService } from '../loyalty/loyalty.service';
 import { CheckoutRequestDto } from './dto/checkout.dto';
 import { PaymentMethod } from '@prisma/client';
 import * as fs from 'fs';
@@ -24,6 +25,7 @@ export class CheckoutService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly paymentService: PaymentService,
+    private readonly loyaltyService: LoyaltyService,
     @InjectQueue('order-expiration') private readonly expirationQueue: Queue,
   ) {
     this.loadLuaScripts();
@@ -169,7 +171,21 @@ export class CheckoutService {
       totalDiscountAmount = validation.discountAmount;
     }
 
-    const finalOrderTotal = totalAmount - totalDiscountAmount;
+    const finalOrderTotalBeforeCoins = totalAmount - totalDiscountAmount;
+    let finalOrderTotal = finalOrderTotalBeforeCoins;
+    let usedCoins = 0;
+
+    if (dto.usePomeloCoins && dto.usePomeloCoins > 0) {
+      const balance = await this.loyaltyService.getCoinBalance(userId);
+      if (balance < dto.usePomeloCoins) {
+        throw new BadRequestException('Không đủ Pomelo Coins');
+      }
+      usedCoins =
+        dto.usePomeloCoins > finalOrderTotalBeforeCoins
+          ? finalOrderTotalBeforeCoins
+          : dto.usePomeloCoins;
+      finalOrderTotal = finalOrderTotalBeforeCoins - usedCoins;
+    }
 
     // 4. SubOrder splitting (grouping items by Store ID)
     const storeGroups = new Map<string, typeof itemsWithPrice>();
@@ -188,7 +204,7 @@ export class CheckoutService {
           data: {
             buyer_id: userId,
             total_amount: finalOrderTotal,
-            discount_amount: totalDiscountAmount,
+            discount_amount: totalDiscountAmount + usedCoins, // Total discount includes coins for now
             voucher_id: voucher?.id,
             status: 'PENDING_PAYMENT',
           },
@@ -243,6 +259,14 @@ export class CheckoutService {
             status: 'PENDING',
           },
         });
+
+        if (usedCoins > 0) {
+          await this.loyaltyService.spendCoins(
+            userId,
+            usedCoins,
+            createdOrder.id,
+          );
+        }
 
         return createdOrder;
       });

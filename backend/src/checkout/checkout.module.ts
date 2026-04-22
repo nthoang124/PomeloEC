@@ -4,6 +4,7 @@ import { CheckoutService } from './checkout.service';
 import { PaymentModule } from '../payment/payment.module';
 import { RedisModule } from '../shared/redis/redis.module';
 import { BullModule } from '@nestjs/bullmq';
+import { LoyaltyModule } from '../loyalty/loyalty.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { BullModule } from '@nestjs/bullmq';
     BullModule.registerQueue({
       name: 'order-expiration',
     }),
+    LoyaltyModule,
   ],
   controllers: [CheckoutController],
   providers: [CheckoutService],
