@@ -14,6 +14,8 @@ import { RedisModule } from './shared/redis/redis.module';
 import { CartModule } from './cart/cart.module';
 import { SearchModule } from './search/search.module';
 import { ConfigModule } from '@nestjs/config';
+import { StoreModule } from './store/store.module';
+import { ShippingModule } from './shipping/shipping.module';
 
 @Module({
   imports: [
@@ -65,6 +67,10 @@ import { ConfigModule } from '@nestjs/config';
     CartModule,
 
     SearchModule,
+
+    StoreModule,
+
+    ShippingModule,
 
     // Add Domain Modules here...
   ],

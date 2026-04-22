@@ -21,6 +21,8 @@ import CartDrawer from "@/components/cart/CartDrawer";
 
 import AuthProvider from "@/components/providers/AuthProvider";
 
+import AppHeader from "@/components/ui/AppHeader";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +35,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
+          <AppHeader />
           {children}
           <CartDrawer />
         </AuthProvider>
