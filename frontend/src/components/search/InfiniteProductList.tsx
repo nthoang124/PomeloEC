@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { ShoppingCart } from "lucide-react";
 import useCartStore from "@/hooks/useCartStore";
+import { fetchApi } from "@/lib/api";
+import { useSession } from "next-auth/react";
 
 interface ProductHit {
   id: string;
@@ -23,16 +25,14 @@ export default function InfiniteProductList({
   const observerTarget = useRef(null);
 
   // Zustand Store action
-  const { toggleCartDrawer, addItemPreview } = useCartStore();
 
   const fetchItems = useCallback(async (p: number, q: string) => {
     if (!q) return;
     setLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:4000/search?q=${q}&page=${p}&limit=10`,
+      const data = await fetchApi<{ items: ProductHit[]; total: number }>(
+        `/search?q=${q}&page=${p}&limit=10`,
       );
-      const data = await res.json();
 
       if (data.items.length === 0) {
         setHasMore(false);
@@ -82,16 +82,22 @@ export default function InfiniteProductList({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, loading]);
 
-  const handleAddToCart = (item: ProductHit) => {
-    // 1. Add item to global client store visually
-    addItemPreview({
-      id: item.id,
-      name: item.name,
-      price: item.base_price,
-      qty: 1,
-    });
-    // 2. Open drawer to wow the user
-    toggleCartDrawer(true);
+  // Zustand Store action
+  const { addItem } = useCartStore();
+
+  // Auth
+  const { data: session } = useSession();
+
+  const handleAddToCart = async (item: ProductHit) => {
+    // Gọi action thêm vào giỏ hàng
+    const token = (session as { accessToken?: string })?.accessToken;
+    if (!token) {
+      alert("Vui lòng đăng nhập để thêm vào giỏ hàng!");
+      return;
+    }
+    // Mock storeId, in real app product should contain storeId
+    const mockStoreId = "b91f16fa-d4b3-46ea-850c-ecf7203d9225";
+    await addItem(token, mockStoreId, item.id, 1);
   };
 
   return (
