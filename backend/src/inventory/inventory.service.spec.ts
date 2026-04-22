@@ -28,7 +28,7 @@ describe('InventoryService', () => {
       findUnique: jest.fn().mockResolvedValue({
         id: 'variant-1',
         stock_quantity: 50,
-        product: { store_id: 'store-1' },
+        product: { store: { owner_id: 'user-1' } },
       }),
     },
   };
@@ -58,9 +58,8 @@ describe('InventoryService', () => {
       {
         variantId: 'variant-1',
         quantityChange: 50,
-        note: 'Nhập hàng test',
       },
-      'store-1',
+      'user-1',
     );
     expect(mockPrismaService.$transaction).toHaveBeenCalled();
     expect(mockRedisService.set).toHaveBeenCalledWith(

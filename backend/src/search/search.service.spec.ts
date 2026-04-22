@@ -37,6 +37,6 @@ describe('SearchService', () => {
     const result = await service.searchProducts('test', 1, 10);
     expect(mockElasticsearchService.search).toHaveBeenCalled();
     expect(result.total).toBe(1);
-    expect(result.items[0].name).toBe('Product 1');
+    expect((result.items[0] as { name: string }).name).toBe('Product 1');
   });
 });

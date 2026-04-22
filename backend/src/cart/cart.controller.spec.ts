@@ -8,6 +8,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CartController } from './cart.controller';
 import { CartService } from './cart.service';
 import { AuthGuard, RoleGuard } from 'nest-keycloak-connect';
+import { Request } from 'express';
 
 describe('CartController', () => {
   let controller: CartController;
@@ -48,7 +49,9 @@ describe('CartController', () => {
   });
 
   it('should get cart items for user', async () => {
-    const req = { user: { sub: 'user-1' } };
+    const req = { user: { sub: 'user-1' } } as unknown as Request & {
+      user?: { sub: string };
+    };
     await controller.getCart(req);
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(service.getCart).toHaveBeenCalledWith('user-1');
