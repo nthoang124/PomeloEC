@@ -4,12 +4,23 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import useCartStore from "@/hooks/useCartStore";
 import { fetchApi } from "@/lib/api";
+import {
+  LocationCombobox,
+  LocationData,
+} from "@/components/checkout/LocationCombobox";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { storeCarts, fetchCart } = useCartStore();
   const [paymentMethod, setPaymentMethod] = useState<"VNPAY" | "COD">("VNPAY");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [voucherInput, setVoucherInput] = useState("");
+  const [appliedVoucher, setAppliedVoucher] = useState<{
+    code: string;
+    discountAmount: number;
+  } | null>(null);
+  const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
+  const [location, setLocation] = useState<LocationData | null>(null);
 
   // Hardcode token tạm thời cho mục đích test checkout
   // Trong thực tế sẽ lấy từ Auth Provider
@@ -34,7 +45,41 @@ export default function CheckoutPage() {
   );
 
   const shippingFee = totalItems > 0 ? 25000 : 0;
-  const finalTotal = totalAmount + shippingFee;
+  const discountAmount = appliedVoucher ? appliedVoucher.discountAmount : 0;
+  const finalTotal = Math.max(0, totalAmount + shippingFee - discountAmount);
+
+  const handleApplyVoucher = async () => {
+    if (!voucherInput.trim()) return;
+    setIsApplyingVoucher(true);
+    try {
+      const response = await fetchApi<{ discountAmount: number }>(
+        "/checkout/validate-voucher",
+        {
+          method: "POST",
+          token: TEMP_TEST_TOKEN,
+          body: JSON.stringify({
+            voucherCode: voucherInput.trim(),
+            totalAmount: totalAmount,
+          }),
+        },
+      );
+
+      setAppliedVoucher({
+        code: voucherInput.trim(),
+        discountAmount: response.discountAmount,
+      });
+      alert(
+        `Áp dụng mã giảm giá thành công! Bạn được giảm ${response.discountAmount.toLocaleString("vi-VN")}₫`,
+      );
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : "Mã giảm giá không hợp lệ";
+      alert(msg);
+      setAppliedVoucher(null);
+    } finally {
+      setIsApplyingVoucher(false);
+    }
+  };
 
   const handleCheckout = async () => {
     if (totalItems === 0) {
@@ -53,13 +98,22 @@ export default function CheckoutPage() {
         })),
       );
 
+      const payload: Record<string, unknown> = {
+        items,
+        paymentMethod,
+        shippingAddress: location
+          ? `${location.wardName}, ${location.districtName}, ${location.provinceName}`
+          : "Chưa chọn địa chỉ",
+      };
+
+      if (appliedVoucher) {
+        payload.voucherCode = appliedVoucher.code;
+      }
+
       const response = await fetchApi<{ paymentUrl?: string }>("/checkout", {
         method: "POST",
         token: TEMP_TEST_TOKEN,
-        body: JSON.stringify({
-          items,
-          paymentMethod,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (paymentMethod === "VNPAY" && response.paymentUrl) {
@@ -136,15 +190,19 @@ export default function CheckoutPage() {
                   />
                 </div>
               </div>
+
+              <div className="mb-4">
+                <LocationCombobox onLocationChange={setLocation} />
+              </div>
+
               <div>
                 <label className="text-xs font-bold block mb-1">
-                  Địa chỉ chi tiết
+                  Địa chỉ chi tiết (Số nhà, tên đường)
                 </label>
                 <input
                   type="text"
                   className="glass-input"
-                  defaultValue="Toà nhà Bitexco, Bến Nghé, Quận 1, TP. Hồ Chí Minh"
-                  readOnly
+                  defaultValue="Toà nhà Bitexco, Bến Nghé"
                 />
               </div>
             </section>
@@ -266,10 +324,31 @@ export default function CheckoutPage() {
               <div className="mb-6">
                 <input
                   type="text"
-                  className="glass-input mb-2"
+                  className="glass-input mb-2 uppercase"
                   placeholder="Mã giảm giá (ví dụ: GIAM50K)"
+                  value={voucherInput}
+                  onChange={(e) => setVoucherInput(e.target.value)}
+                  disabled={isApplyingVoucher || !!appliedVoucher}
                 />
-                <button className="btn-glass py-2 text-sm">Áp dụng</button>
+                {!appliedVoucher ? (
+                  <button
+                    className="btn-glass py-2 text-sm w-full"
+                    onClick={handleApplyVoucher}
+                    disabled={isApplyingVoucher || !voucherInput.trim()}
+                  >
+                    {isApplyingVoucher ? "Đang áp dụng..." : "Áp dụng"}
+                  </button>
+                ) : (
+                  <button
+                    className="btn-glass py-2 text-sm w-full bg-red-500/20 text-red-600 border-red-500/30 hover:bg-red-500/30"
+                    onClick={() => {
+                      setAppliedVoucher(null);
+                      setVoucherInput("");
+                    }}
+                  >
+                    Huỷ mã giảm giá
+                  </button>
+                )}
               </div>
 
               <div className="flex justify-between mb-3 text-sm">
@@ -284,6 +363,14 @@ export default function CheckoutPage() {
                   {shippingFee.toLocaleString("vi-VN")}₫
                 </span>
               </div>
+              {appliedVoucher && (
+                <div className="flex justify-between mb-3 text-sm text-[#10B981]">
+                  <span>Giảm giá (Voucher)</span>
+                  <span className="font-bold">
+                    -{discountAmount.toLocaleString("vi-VN")}₫
+                  </span>
+                </div>
+              )}
 
               <div className="flex justify-between mt-4 pt-4 border-t border-dashed border-black/10 font-extrabold text-xl">
                 <span>Tổng cộng</span>

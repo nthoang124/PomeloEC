@@ -12,6 +12,9 @@ import { PaymentMethod } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { Queue } from 'bullmq';
+import { InjectQueue } from '@nestjs/bullmq';
+
 @Injectable()
 export class CheckoutService {
   private readonly logger = new Logger(CheckoutService.name);
@@ -21,6 +24,7 @@ export class CheckoutService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly paymentService: PaymentService,
+    @InjectQueue('order-expiration') private readonly expirationQueue: Queue,
   ) {
     this.loadLuaScripts();
   }
@@ -55,6 +59,51 @@ export class CheckoutService {
         end
       `;
     }
+  }
+
+  async validateVoucher(voucherCode: string, totalAmount: number) {
+    const voucher = await this.prisma.voucher.findUnique({
+      where: { code: voucherCode },
+    });
+
+    if (
+      !voucher ||
+      !voucher.is_active ||
+      voucher.used_count >= voucher.usage_limit
+    ) {
+      throw new BadRequestException(
+        'Mã giảm giá không hợp lệ hoặc đã hết lượt',
+      );
+    }
+
+    if (
+      voucher.min_order_value &&
+      totalAmount < Number(voucher.min_order_value)
+    ) {
+      throw new BadRequestException('Đơn hàng chưa đạt giá trị tối thiểu');
+    }
+
+    let discountAmount = 0;
+    if (voucher.discount_type === 'FIXED') {
+      discountAmount = Number(voucher.discount_value);
+    } else {
+      discountAmount = totalAmount * (Number(voucher.discount_value) / 100);
+      if (
+        voucher.max_discount_value &&
+        discountAmount > Number(voucher.max_discount_value)
+      ) {
+        discountAmount = Number(voucher.max_discount_value);
+      }
+    }
+
+    if (discountAmount > totalAmount) {
+      discountAmount = totalAmount; // Prevent negative total
+    }
+
+    return {
+      voucher,
+      discountAmount,
+    };
   }
 
   async processCheckout(
@@ -108,7 +157,21 @@ export class CheckoutService {
       );
     }
 
-    // 3. SubOrder splitting (grouping items by Store ID)
+    // 3. Check Voucher and calculate discount
+    let voucher = null;
+    let totalDiscountAmount = 0;
+    if (dto.voucherCode) {
+      const validation = await this.validateVoucher(
+        dto.voucherCode,
+        totalAmount,
+      );
+      voucher = validation.voucher;
+      totalDiscountAmount = validation.discountAmount;
+    }
+
+    const finalOrderTotal = totalAmount - totalDiscountAmount;
+
+    // 4. SubOrder splitting (grouping items by Store ID)
     const storeGroups = new Map<string, typeof itemsWithPrice>();
     for (const item of itemsWithPrice) {
       if (!storeGroups.has(item.storeId)) {
@@ -117,17 +180,26 @@ export class CheckoutService {
       storeGroups.get(item.storeId)!.push(item);
     }
 
-    // 4. Create Order and SubOrders in a transaction
+    // 5. Create Order and SubOrders in a transaction
     try {
       const order = await this.prisma.$transaction(async (tx) => {
         // Create main order
         const createdOrder = await tx.order.create({
           data: {
             buyer_id: userId,
-            total_amount: totalAmount,
+            total_amount: finalOrderTotal,
+            discount_amount: totalDiscountAmount,
+            voucher_id: voucher?.id,
             status: 'PENDING_PAYMENT',
           },
         });
+
+        if (voucher) {
+          await tx.voucher.update({
+            where: { id: voucher.id },
+            data: { used_count: { increment: 1 } },
+          });
+        }
 
         // Create sub orders and items
         for (const [storeId, items] of storeGroups.entries()) {
@@ -136,11 +208,19 @@ export class CheckoutService {
             0,
           );
 
+          // Prorating Math for SubOrder
+          let proratedDiscount = 0;
+          if (totalDiscountAmount > 0 && totalAmount > 0) {
+            proratedDiscount =
+              (subTotalAmount / totalAmount) * totalDiscountAmount;
+          }
+          const finalSubTotal = Math.max(0, subTotalAmount - proratedDiscount);
+
           await tx.subOrder.create({
             data: {
               order_id: createdOrder.id,
               store_id: storeId,
-              total_amount: subTotalAmount,
+              total_amount: finalSubTotal,
               status: 'PENDING_PAYMENT',
               shipping_fee: 0, // Placeholder
               items: {
@@ -158,7 +238,7 @@ export class CheckoutService {
         await tx.payment.create({
           data: {
             order_id: createdOrder.id,
-            amount: totalAmount,
+            amount: finalOrderTotal,
             method: dto.paymentMethod as PaymentMethod,
             status: 'PENDING',
           },
@@ -172,10 +252,17 @@ export class CheckoutService {
       if (dto.paymentMethod === 'VNPAY') {
         paymentUrl = this.paymentService.createVNPayUrl(
           order.id,
-          totalAmount,
+          finalOrderTotal,
           ipAddress,
         );
       }
+
+      // 6. Add expiration job to BullMQ (15 minutes)
+      await this.expirationQueue.add(
+        'check-unpaid-order',
+        { orderId: order.id },
+        { delay: 15 * 60 * 1000 },
+      );
 
       return {
         message: 'Tạo đơn hàng thành công',

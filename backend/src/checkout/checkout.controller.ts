@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  UseGuards,
+  BadRequestException,
+} from '@nestjs/common';
 import { CheckoutService } from './checkout.service';
 import { CheckoutRequestDto } from './dto/checkout.dto';
 import { AuthGuard, RoleGuard } from 'nest-keycloak-connect';
@@ -22,5 +29,21 @@ export class CheckoutController {
     const ipAddress = req.ip || req.connection?.remoteAddress || '127.0.0.1';
 
     return this.checkoutService.processCheckout(userId, dto, ipAddress);
+  }
+
+  @Post('validate-voucher')
+  @ApiOperation({ summary: 'Validate voucher and calculate discount' })
+  async validateVoucher(
+    @Body() body: { voucherCode: string; totalAmount: number },
+  ) {
+    if (!body.voucherCode || !body.totalAmount) {
+      throw new BadRequestException(
+        'Voucher code and totalAmount are required',
+      );
+    }
+    return this.checkoutService.validateVoucher(
+      body.voucherCode,
+      body.totalAmount,
+    );
   }
 }
