@@ -166,12 +166,17 @@ model VariantAttributeMapping {
 // ------ ORDER MODULE ------
 
 model Order {
-  id           String      @id @default(uuid()) @db.Uuid
-  buyer_id     String      @db.Uuid
-  buyer        User        @relation(fields: [buyer_id], references: [id])
-  status       OrderStatus @default(PENDING_PAYMENT)
-  total_amount Decimal     @db.Decimal(15, 2)
-  created_at   DateTime    @default(now())
+  id              String        @id @default(uuid()) @db.Uuid
+  buyer_id        String        @db.Uuid
+  buyer           User          @relation(fields: [buyer_id], references: [id])
+  status          OrderStatus   @default(PENDING_PAYMENT)
+  total_amount    Decimal       @db.Decimal(15, 2)
+  discount_amount Decimal       @default(0.0) @db.Decimal(15, 2)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt @default(now())
+
+  voucher_id      String?       @db.Uuid
+  voucher         Voucher?      @relation(fields: [voucher_id], references: [id])
 
   sub_orders SubOrder[]
   payments   Payment[]
@@ -289,4 +294,31 @@ enum WalletTxType {
   ESCROW_RELEASE   // Mở khóa tiền khi đơn hàng hoàn thành
   PLATFORM_FEE     // Trừ phí nền tảng
   WITHDRAWAL       // Rút tiền về ngân hàng
+}
+
+// ------ PROMOTION MODULE ------
+
+model Voucher {
+  id                 String       @id @default(uuid()) @db.Uuid
+  code               String       @unique @db.VarChar(50)
+  discount_type      DiscountType
+  discount_value     Decimal      @db.Decimal(15, 2)
+  min_order_value    Decimal?     @db.Decimal(15, 2)
+  max_discount_value Decimal?     @db.Decimal(15, 2)
+  usage_limit        Int          @default(1)
+  used_count         Int          @default(0)
+  start_date         DateTime     @default(now())
+  end_date           DateTime
+  is_active          Boolean      @default(true)
+  created_at         DateTime     @default(now())
+  updated_at         DateTime     @updatedAt
+
+  orders             Order[]
+
+  @@index([code])
+}
+
+enum DiscountType {
+  FIXED
+  PERCENTAGE
 }
