@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 
 import CartDrawer from "@/components/cart/CartDrawer";
 
+import AuthProvider from "@/components/providers/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -30,8 +32,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <CartDrawer />
+        <AuthProvider>
+          {children}
+          <CartDrawer />
+        </AuthProvider>
       </body>
     </html>
   );

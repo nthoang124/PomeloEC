@@ -128,3 +128,78 @@
     @apply font-sans;
   }
 }
+
+/* Aurora Mesh Gradient Colors */
+:root {
+  --aurora-bg-mesh: radial-gradient(circle at 10% 20%, rgba(200, 230, 201, 0.4) 0%, transparent 20%),
+                    radial-gradient(circle at 90% 10%, rgba(255, 182, 193, 0.4) 0%, transparent 20%),
+                    radial-gradient(circle at 50% 80%, rgba(178, 223, 219, 0.4) 0%, transparent 40%),
+                    radial-gradient(circle at 10% 90%, rgba(255, 209, 220, 0.4) 0%, transparent 30%),
+                    radial-gradient(circle at 90% 90%, rgba(193, 225, 193, 0.4) 0%, transparent 30%);
+
+  --card-pink-gradient: linear-gradient(135deg, rgba(255, 182, 193, 0.8), rgba(255, 209, 220, 0.6));
+  --card-green-gradient: linear-gradient(135deg, rgba(167, 219, 167, 0.8), rgba(193, 225, 193, 0.6));
+  --card-white-glass: rgba(255, 255, 255, 0.65);
+  --card-white-glass-intense: rgba(255, 255, 255, 0.8);
+  --color-ruby: #F43F5E;
+  --color-matcha: #10B981;
+}
+
+@layer components {
+  /* Buttons inside Glass */
+  .btn-glass {
+    background: var(--card-white-glass);
+    backdrop-filter: blur(10px);
+    padding: 12px 24px;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .btn-glass:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-2px); }
+
+  /* Interactive Container Elements */
+  .glass-box {
+    background: var(--card-white-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-xl);
+    padding: 1.25rem;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+  }
+
+  /* Custom Inputs */
+  input.glass-input {
+    width: 100%;
+    background: var(--card-white-glass);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 14px 20px;
+    border-radius: var(--radius-full);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  input.glass-input:focus { background: white; border-color: white; }
+
+  /* The Aurora Cards */
+  .aurora-card {
+    border-radius: var(--radius-xl);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.02);
+    transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .aurora-card:hover { transform: scale(1.02); }
+  .aurora-card.pink { background: var(--card-pink-gradient); }
+  .aurora-card.green { background: var(--card-green-gradient); }
+}
