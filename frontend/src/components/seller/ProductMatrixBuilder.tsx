@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { PlusCircle, Trash2, Box } from "lucide-react"; // Giả định dùng lucide-react (có sẵn phổ biến)
+import { fetchApi } from "@/lib/api";
+import { useSession } from "next-auth/react";
 
 interface AttributeValue {
   value: string;
@@ -30,30 +32,31 @@ export default function ProductMatrixBuilder() {
   const [matrixPreview, setMatrixPreview] = useState<MatrixPreviewItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const { data: session } = useSession();
+
   // Gọi thử logic local để render trước (Ở thực tế sẽ fetch qua NestJS `/catalog/matrix/preview`)
   const handleGenerateMatrix = async () => {
     setIsLoading(true);
     try {
+      const token = (session as { accessToken?: string })?.accessToken;
       // Stubbing: Thay vì gọi API, ta minh họa trực tiếp logic chập để Frontend UX mượt
       // Gọi fetch API Server ở Production
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000"}/catalog/matrix/preview`,
+      const previewData = await fetchApi<MatrixPreviewItem[]>(
+        `/catalog/matrix/preview`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          token,
           body: JSON.stringify({ baseSku, attributes }),
         },
       );
 
-      if (response.ok) {
-        const previewData = await response.json();
-        setMatrixPreview(previewData);
-      } else {
-        // Mocking Data fallback for UI prototype visualization
-        alert("API Gateway đang tắt, render fallback mô phỏng O(n)");
-      }
-    } catch (e) {
+      setMatrixPreview(previewData);
+    } catch (e: unknown) {
       console.error(e);
+      alert(
+        (e as Error).message ||
+          "API Gateway đang tắt, render fallback mô phỏng O(n)",
+      );
     } finally {
       setIsLoading(false);
     }

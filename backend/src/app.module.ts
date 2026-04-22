@@ -13,9 +13,11 @@ import { InventoryModule } from './inventory/inventory.module';
 import { RedisModule } from './shared/redis/redis.module';
 import { CartModule } from './cart/cart.module';
 import { SearchModule } from './search/search.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     // Pino Logger Setup with traceId generation
     LoggerModule.forRoot({
       pinoHttp: {
