@@ -15,9 +15,10 @@ model User {
   created_at    DateTime @default(now())
 
   // Relations
-  addresses Address[]
-  orders    Order[]
-  store     Store?
+  addresses        Address[]
+  orders           Order[]
+  store            Store?
+  coinTransactions CoinTransaction[]
 }
 
 enum UserRole {
@@ -48,10 +49,10 @@ model Store {
   escrow_balance    Decimal     @default(0.0) @db.Decimal(15, 2)
   status            StoreStatus @default(PENDING)
 
-  products             Product[]
-  sub_orders           SubOrder[]
-  seller_profile       SellerProfile?
-  wallet_transactions  WalletTransaction[]
+  products            Product[]
+  sub_orders          SubOrder[]
+  seller_profile      SellerProfile?
+  wallet_transactions WalletTransaction[]
 }
 
 enum StoreStatus {
@@ -70,7 +71,6 @@ model SellerProfile {
   created_at           DateTime @default(now())
   updated_at           DateTime @updatedAt
 }
-
 
 // ------ CATALOG MODULE ------
 
@@ -149,6 +149,7 @@ model Variant {
   attribute_mappings VariantAttributeMapping[]
   order_items        OrderItem[]
   inventory_ledgers  InventoryLedger[]
+  flashSaleItems     FlashSaleItem[]
 
   @@index([product_id])
 }
@@ -166,17 +167,17 @@ model VariantAttributeMapping {
 // ------ ORDER MODULE ------
 
 model Order {
-  id              String        @id @default(uuid()) @db.Uuid
-  buyer_id        String        @db.Uuid
-  buyer           User          @relation(fields: [buyer_id], references: [id])
-  status          OrderStatus   @default(PENDING_PAYMENT)
-  total_amount    Decimal       @db.Decimal(15, 2)
-  discount_amount Decimal       @default(0.0) @db.Decimal(15, 2)
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt @default(now())
+  id              String      @id @default(uuid()) @db.Uuid
+  buyer_id        String      @db.Uuid
+  buyer           User        @relation(fields: [buyer_id], references: [id])
+  status          OrderStatus @default(PENDING_PAYMENT)
+  total_amount    Decimal     @db.Decimal(15, 2)
+  discount_amount Decimal     @default(0.0) @db.Decimal(15, 2)
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @default(now()) @updatedAt
 
-  voucher_id      String?       @db.Uuid
-  voucher         Voucher?      @relation(fields: [voucher_id], references: [id])
+  voucher_id String?  @db.Uuid
+  voucher    Voucher? @relation(fields: [voucher_id], references: [id])
 
   sub_orders SubOrder[]
   payments   Payment[]
@@ -210,6 +211,8 @@ enum OrderStatus {
   DELIVERED
   COMPLETED
   CANCELED
+  DISPUTED
+  RETURNED
 }
 
 model OrderItem {
@@ -276,24 +279,26 @@ enum TransactionType {
 // ------ WALLET MODULE ------
 
 model WalletTransaction {
-  id                 String             @id @default(uuid()) @db.Uuid
-  store_id           String             @db.Uuid
-  store              Store              @relation(fields: [store_id], references: [id])
-  amount             Decimal            @db.Decimal(15, 2)
+  id                 String       @id @default(uuid()) @db.Uuid
+  store_id           String       @db.Uuid
+  store              Store        @relation(fields: [store_id], references: [id])
+  amount             Decimal      @db.Decimal(15, 2)
   transaction_type   WalletTxType
-  reference_order_id String?            @db.Uuid
-  description        String?            @db.VarChar(255)
-  created_at         DateTime           @default(now())
+  reference_order_id String?      @db.Uuid
+  description        String?      @db.VarChar(255)
+  created_at         DateTime     @default(now())
 
   @@index([store_id])
   @@index([reference_order_id])
 }
 
 enum WalletTxType {
-  ESCROW_LOCK      // Khóa tiền khi khách mua hàng
-  ESCROW_RELEASE   // Mở khóa tiền khi đơn hàng hoàn thành
-  PLATFORM_FEE     // Trừ phí nền tảng
-  WITHDRAWAL       // Rút tiền về ngân hàng
+  ESCROW_LOCK // Khóa tiền khi khách mua hàng
+  ESCROW_RELEASE // Mở khóa tiền khi đơn hàng hoàn thành
+  ESCROW_DISPUTE // Đóng băng tiền khi có tranh chấp
+  ESCROW_REFUND // Hoàn trả tiền
+  PLATFORM_FEE // Trừ phí nền tảng
+  WITHDRAWAL // Rút tiền về ngân hàng
 }
 
 // ------ PROMOTION MODULE ------
@@ -313,7 +318,7 @@ model Voucher {
   created_at         DateTime     @default(now())
   updated_at         DateTime     @updatedAt
 
-  orders             Order[]
+  orders Order[]
 
   @@index([code])
 }
@@ -321,4 +326,59 @@ model Voucher {
 enum DiscountType {
   FIXED
   PERCENTAGE
+}
+
+// ------ LOYALTY MODULE ------
+
+model CoinTransaction {
+  id               String     @id @default(uuid()) @db.Uuid
+  user_id          String     @db.Uuid
+  user             User       @relation(fields: [user_id], references: [id])
+  amount           Int // Dương là cộng, âm là trừ
+  transaction_type CoinTxType
+  reference_id     String?    @db.Uuid // Gắn với Order ID
+  created_at       DateTime   @default(now())
+
+  @@index([user_id])
+}
+
+enum CoinTxType {
+  EARN
+  SPEND
+  REFUND
+}
+
+// ------ FLASH SALE MODULE ------
+
+model FlashSale {
+  id         String          @id @default(uuid()) @db.Uuid
+  name       String          @db.VarChar(100)
+  start_time DateTime
+  end_time   DateTime
+  status     FlashSaleStatus @default(SCHEDULED)
+  created_at DateTime        @default(now())
+  updated_at DateTime        @updatedAt
+
+  items FlashSaleItem[]
+}
+
+enum FlashSaleStatus {
+  SCHEDULED
+  ACTIVE
+  ENDED
+  CANCELED
+}
+
+model FlashSaleItem {
+  id            String    @id @default(uuid()) @db.Uuid
+  flash_sale_id String    @db.Uuid
+  flash_sale    FlashSale @relation(fields: [flash_sale_id], references: [id], onDelete: Cascade)
+  variant_id    String    @db.Uuid
+  variant       Variant   @relation(fields: [variant_id], references: [id])
+  promo_price   Decimal   @db.Decimal(15, 2)
+  stock_limit   Int
+  sold_count    Int       @default(0)
+
+  @@index([flash_sale_id])
+  @@index([variant_id])
 }

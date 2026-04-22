@@ -22,6 +22,10 @@ export default function CheckoutPage() {
   const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
   const [location, setLocation] = useState<LocationData | null>(null);
 
+  // Pomelo Coins Mock State
+  const [coinBalance, setCoinBalance] = useState(50000); // Mock 50,000 coins
+  const [usePomeloCoins, setUsePomeloCoins] = useState(false);
+
   // Hardcode token tạm thời cho mục đích test checkout
   // Trong thực tế sẽ lấy từ Auth Provider
   const TEMP_TEST_TOKEN = "test-token";
@@ -46,7 +50,15 @@ export default function CheckoutPage() {
 
   const shippingFee = totalItems > 0 ? 25000 : 0;
   const discountAmount = appliedVoucher ? appliedVoucher.discountAmount : 0;
-  const finalTotal = Math.max(0, totalAmount + shippingFee - discountAmount);
+
+  const totalBeforeCoins = Math.max(
+    0,
+    totalAmount + shippingFee - discountAmount,
+  );
+  const coinsToUse = usePomeloCoins
+    ? Math.min(coinBalance, totalBeforeCoins)
+    : 0;
+  const finalTotal = totalBeforeCoins - coinsToUse;
 
   const handleApplyVoucher = async () => {
     if (!voucherInput.trim()) return;
@@ -108,6 +120,9 @@ export default function CheckoutPage() {
 
       if (appliedVoucher) {
         payload.voucherCode = appliedVoucher.code;
+      }
+      if (usePomeloCoins && coinsToUse > 0) {
+        payload.usePomeloCoins = coinsToUse;
       }
 
       const response = await fetchApi<{ paymentUrl?: string }>("/checkout", {
@@ -351,6 +366,31 @@ export default function CheckoutPage() {
                 )}
               </div>
 
+              {/* Pomelo Coins */}
+              <div className="mb-6 p-4 rounded-xl border border-white/40 bg-white/30">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">💰</span>
+                    <span className="font-bold text-sm">Pomelo Coins</span>
+                  </div>
+                  <div className="text-sm font-bold text-[#10B981]">
+                    {coinBalance.toLocaleString("vi-VN")} xu
+                  </div>
+                </div>
+                <label className="flex items-center gap-2 mt-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-[#10B981] rounded"
+                    checked={usePomeloCoins}
+                    onChange={(e) => setUsePomeloCoins(e.target.checked)}
+                    disabled={coinBalance === 0}
+                  />
+                  <span className="text-sm text-gray-700">
+                    Dùng xu để giảm giá
+                  </span>
+                </label>
+              </div>
+
               <div className="flex justify-between mb-3 text-sm">
                 <span>Tạm tính ({totalItems} sản phẩm)</span>
                 <span className="font-bold">
@@ -368,6 +408,14 @@ export default function CheckoutPage() {
                   <span>Giảm giá (Voucher)</span>
                   <span className="font-bold">
                     -{discountAmount.toLocaleString("vi-VN")}₫
+                  </span>
+                </div>
+              )}
+              {usePomeloCoins && coinsToUse > 0 && (
+                <div className="flex justify-between mb-3 text-sm text-yellow-600">
+                  <span>Dùng Pomelo Coins</span>
+                  <span className="font-bold">
+                    -{coinsToUse.toLocaleString("vi-VN")}₫
                   </span>
                 </div>
               )}
